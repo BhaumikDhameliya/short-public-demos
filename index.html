@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bhaumik · Live Demos</title>
+<meta name="description" content="Bite-sized, standalone frontend demos showcasing real-world integrations — built to impress." />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg:      '#0c0c0a',
+          surface: '#131310',
+          surface2:'#1a1a16',
+          border:  '#272720',
+          amber:   '#e8a325',
+          cream:   '#f0ead8',
+          muted:   '#6b6858',
+          tagbg:   '#1e1e19',
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'Georgia', 'serif'],
+          mono:    ['"JetBrains Mono"', 'monospace'],
+        },
+        keyframes: {
+          'fade-up':   { from: { opacity: '0', transform: 'translateY(14px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+          'fade-down': { from: { opacity: '0', transform: 'translateY(-10px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+          'pulse-dot': { '0%, 100%': { opacity: '1', transform: 'scale(1)' }, '50%': { opacity: '0.5', transform: 'scale(0.8)' } },
+        },
+        animation: {
+          'fade-up':   'fade-up 0.6s ease both',
+          'fade-down': 'fade-down 0.6s ease both',
+          'pulse-dot': 'pulse-dot 2.2s ease-in-out infinite',
+        },
+      }
+    }
+  }
+</script>
+<style>
+  /* Grid background — not achievable with Tailwind CDN */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(232,163,37,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,163,37,0.018) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Radial glow — not achievable with Tailwind CDN */
+  body::after {
+    content: '';
+    position: fixed; top: -200px; left: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(232,163,37,0.07) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Card radial hover glow — dynamic, not achievable with Tailwind CDN */
+  .demo-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at top left, rgba(232,163,37,0.1), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 14px;
+  }
+  .demo-card:hover::before { opacity: 1; }
+
+  /* Staggered animation delays */
+  .delay-1 { animation-delay: 0.10s; }
+  .delay-2 { animation-delay: 0.18s; }
+  .delay-3 { animation-delay: 0.26s; }
+  .delay-4 { animation-delay: 0.34s; }
+  .delay-5 { animation-delay: 0.42s; }
+  .delay-6 { animation-delay: 0.50s; }
+  .delay-7 { animation-delay: 0.58s; }
+  .delay-8 { animation-delay: 0.70s; }
+</style>
+</head>
+
+<body class="bg-bg text-cream font-mono text-[13px] min-h-screen overflow-x-hidden">
+<div class="relative z-10 max-w-[960px] mx-auto px-6">
+
+  <!-- ── Nav ── -->
+  <nav class="flex justify-between items-center pt-7 mb-20 animate-fade-down">
+    <div class="font-display text-[18px] font-black text-cream tracking-tight">
+      B<span class="text-amber">.</span>
+    </div>
+    <div class="flex items-center gap-2 text-[11px] text-muted">
+      <span class="w-[6px] h-[6px] rounded-full bg-amber animate-pulse-dot inline-block"></span>
+      All demos live on GitHub Pages
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="mb-20">
+    <div class="inline-flex items-center gap-2 text-[11px] text-amber uppercase tracking-[1.5px] mb-5 animate-fade-up delay-1">
+      <span class="block w-6 h-px bg-amber"></span>
+      Interactive Demos
+    </div>
+    <h1 class="font-display text-[clamp(38px,6vw,68px)] font-black leading-[1.05] tracking-[-1.5px] text-cream mb-5 animate-fade-up delay-2">
+      Real integrations.<br /><em class="text-amber italic">Working code.</em>
+    </h1>
+    <p class="text-[13px] text-muted leading-[1.75] max-w-[480px] animate-fade-up delay-3">
+      Bite-sized, standalone frontend demos showcasing real-world integrations —
+      each a single page, deployed and shareable instantly.
+    </p>
+  </section>
+
+  <!-- ── Section Label ── -->
+  <div class="flex items-center gap-3 text-[10px] uppercase tracking-[1.8px] text-muted mb-6 animate-fade-up delay-4">
+    Demos
+    <span class="flex-1 h-px bg-border"></span>
+  </div>
+
+  <!-- ── Demo Grid ── -->
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 mb-20">
+
+    <!-- ── DEMO 01 · Supabase ── -->
+    <a href="./supabase-integration/"
+       target="_blank" rel="noopener"
+       class="demo-card relative flex flex-col gap-3 bg-surface border border-border rounded-[14px] p-6 no-underline
+              transition-all duration-[250ms]
+              hover:-translate-y-1 hover:border-amber/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]
+              animate-fade-up delay-5">
+      <div class="text-[10px] text-muted tracking-wide">01</div>
+      <div class="text-[28px] leading-none">🗄️</div>
+      <div class="font-display text-[20px] font-bold text-cream leading-snug tracking-tight">
+        Supabase + Vercel Integration
+      </div>
+      <div class="text-[12px] text-muted leading-[1.7] flex-1">
+        Connect a static HTML site to Supabase — form submissions, email capture,
+        live table inserts, and Zapier automation triggers.
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Supabase</span>
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Vercel</span>
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Zapier</span>
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">HTML</span>
+      </div>
+      <div class="flex items-center justify-between pt-3.5 border-t border-border text-[11px]">
+        <span class="text-muted">Mar 2026</span>
+        <span class="flex items-center gap-1.5 text-amber font-medium tracking-wide">
+          View Demo
+          <svg class="w-3 h-3 stroke-current fill-none stroke-2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- ══ ADD NEW DEMOS BELOW THIS LINE ══
+
+    <a href="./your-demo-folder/"
+       target="_blank" rel="noopener"
+       class="demo-card relative flex flex-col gap-3 bg-surface border border-border rounded-[14px] p-6 no-underline
+              transition-all duration-[250ms]
+              hover:-translate-y-1 hover:border-amber/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]
+              animate-fade-up delay-6">
+      <div class="text-[10px] text-muted tracking-wide">02</div>
+      <div class="text-[28px] leading-none">🔗</div>
+      <div class="font-display text-[20px] font-bold text-cream leading-snug tracking-tight">Your Demo Title</div>
+      <div class="text-[12px] text-muted leading-[1.7] flex-1">Short description of what this demo shows.</div>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Tag1</span>
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Tag2</span>
+      </div>
+      <div class="flex items-center justify-between pt-3.5 border-t border-border text-[11px]">
+        <span class="text-muted">Mon YYYY</span>
+        <span class="flex items-center gap-1.5 text-amber font-medium">
+          View Demo
+          <svg class="w-3 h-3 stroke-current fill-none stroke-2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+
+    ══ END NEW DEMOS ══ -->
+
+    <!-- ── Coming Soon placeholder ── -->
+    <div class="demo-card relative flex flex-col gap-3 bg-surface border border-dashed border-border rounded-[14px] p-6 opacity-40 pointer-events-none animate-fade-up delay-6">
+      <div class="text-[10px] text-muted tracking-wide">02</div>
+      <div class="text-[28px] leading-none">🔜</div>
+      <div class="font-display text-[20px] font-bold text-cream leading-snug tracking-tight">Next Demo</div>
+      <div class="text-[12px] text-muted leading-[1.7] flex-1">More integrations coming soon.</div>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-tagbg border border-border rounded px-2 py-0.5 text-[10px] text-muted">Coming Soon</span>
+      </div>
+      <div class="flex items-center justify-between pt-3.5 border-t border-border text-[11px]">
+        <span class="text-muted">—</span>
+        <span class="flex items-center gap-1.5 text-muted font-medium">
+          Stay tuned
+          <svg class="w-3 h-3 stroke-current fill-none stroke-2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="border-t border-border py-7 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-muted animate-fade-up delay-8">
+    <span>
+      © 2026 Bhaumik ·
+      <a href="https://github.com/BhaumikDhameliya/short-public-demos"
+         target="_blank" rel="noopener"
+         class="text-amber hover:opacity-75 transition-opacity no-underline">
+        github.com/BhaumikDhameliya/short-public-demos
+      </a>
+    </span>
+    <span>Built &amp; deployed on GitHub Pages</span>
+  </footer>
+
+</div>
+</body>
+</html>
