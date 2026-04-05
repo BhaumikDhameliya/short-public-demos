@@ -1,0 +1,1677 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TikTok Data Pro API — Live Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #18181f;
+        --border: #2a2a35;
+        --accent: #fe2c55;
+        --accent2: #25f4ee;
+        --text: #f0f0f5;
+        --muted: #6b6b80;
+        --tag-bg: #1e1e28;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Syne", sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Ambient background */
+      body::before {
+        content: "";
+        position: fixed;
+        top: -40%;
+        left: -20%;
+        width: 70vw;
+        height: 70vw;
+        background: radial-gradient(
+          circle,
+          rgba(254, 44, 85, 0.07) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: -40%;
+        right: -20%;
+        width: 60vw;
+        height: 60vw;
+        background: radial-gradient(
+          circle,
+          rgba(37, 244, 238, 0.06) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Header */
+      header {
+        padding: 52px 0 0;
+        text-align: center;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(254, 44, 85, 0.12);
+        border: 1px solid rgba(254, 44, 85, 0.25);
+        border-radius: 999px;
+        padding: 6px 16px;
+        font-size: 12px;
+        font-family: "DM Mono", monospace;
+        color: var(--accent);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 28px;
+        animation: fadeDown 0.5s ease both;
+      }
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.3);
+        }
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        margin-bottom: 18px;
+        animation: fadeDown 0.5s 0.1s ease both;
+      }
+      h1 span.r {
+        color: var(--accent);
+      }
+      h1 span.c {
+        color: var(--accent2);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        max-width: 520px;
+        margin: 0 auto 40px;
+        font-weight: 400;
+        animation: fadeDown 0.5s 0.2s ease both;
+      }
+
+      .cta-bar {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 56px;
+        animation: fadeDown 0.5s 0.3s ease both;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-family: "Syne", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        box-shadow: 0 0 24px rgba(254, 44, 85, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 32px rgba(254, 44, 85, 0.5);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-family: "Syne", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .btn-secondary:hover {
+        border-color: var(--accent2);
+        background: rgba(37, 244, 238, 0.05);
+      }
+
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 4px;
+        margin-bottom: 20px;
+        animation: fadeUp 0.5s 0.4s ease both;
+      }
+      .tab {
+        flex: 1;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--muted);
+        font-family: "Syne", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .tab.active {
+        background: var(--surface2);
+        color: var(--text);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      }
+      .tab:hover:not(.active) {
+        color: var(--text);
+      }
+
+      /* Demo panel */
+      .demo-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        animation: fadeUp 0.5s 0.5s ease both;
+      }
+
+      .panel-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface2);
+      }
+      .method-badge {
+        background: rgba(37, 244, 238, 0.12);
+        color: var(--accent2);
+        border: 1px solid rgba(37, 244, 238, 0.2);
+        border-radius: 5px;
+        padding: 3px 9px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+      }
+      .endpoint-path {
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .endpoint-path span {
+        color: var(--text);
+      }
+
+      .panel-body {
+        padding: 20px;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .featured-row {
+        margin-bottom: 18px;
+      }
+      .featured-row-label {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .featured-row-label span.hint {
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--muted);
+        opacity: 0.9;
+      }
+      .featured-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .featured-chip {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          color 0.2s;
+      }
+      .featured-chip:hover {
+        border-color: var(--accent);
+        background: rgba(254, 44, 85, 0.08);
+      }
+      .featured-chip:focus-visible {
+        outline: 2px solid var(--accent2);
+        outline-offset: 2px;
+      }
+      .input-wrap {
+        flex: 1;
+        position: relative;
+      }
+      .input-label {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .required {
+        color: var(--accent);
+      }
+      .optional {
+        background: var(--tag-bg);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 11px 14px;
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      input:focus {
+        border-color: var(--accent2);
+        box-shadow: 0 0 0 3px rgba(37, 244, 238, 0.08);
+      }
+      input::placeholder {
+        color: var(--muted);
+      }
+
+      .run-btn {
+        align-self: flex-end;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 11px 22px;
+        font-family: "Syne", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          opacity 0.15s;
+        white-space: nowrap;
+        box-shadow: 0 0 16px rgba(254, 44, 85, 0.25);
+      }
+      .run-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 0 24px rgba(254, 44, 85, 0.45);
+      }
+      .run-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Result area */
+      .result-area {
+        margin-top: 4px;
+      }
+
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-weight: 500;
+      }
+      .status-pill.success {
+        background: rgba(37, 244, 238, 0.1);
+        color: var(--accent2);
+        border: 1px solid rgba(37, 244, 238, 0.2);
+      }
+      .status-pill.error {
+        background: rgba(254, 44, 85, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(254, 44, 85, 0.2);
+      }
+      .status-pill.loading {
+        background: rgba(255, 200, 0, 0.1);
+        color: #ffc800;
+        border: 1px solid rgba(255, 200, 0, 0.2);
+      }
+
+      .result-time {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* Profile card */
+      .profile-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent);
+        flex-shrink: 0;
+        background: var(--surface2);
+      }
+      .avatar-placeholder {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .profile-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .profile-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .verified {
+        color: var(--accent2);
+        font-size: 14px;
+      }
+      .profile-handle {
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-family: "DM Mono", monospace;
+      }
+      .profile-bio {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .stat-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Video cards */
+      .section-title {
+        font-size: 12px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      .videos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .video-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: border-color 0.2s;
+      }
+      .video-card:hover {
+        border-color: var(--accent);
+      }
+      .video-thumb {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #1a1a25, #2a2a35);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .video-desc {
+        flex: 1;
+        min-width: 0;
+        font-size: 13px;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .video-meta {
+        display: flex;
+        gap: 14px;
+        flex-shrink: 0;
+      }
+      .vm {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Hashtag results */
+      .hashtag-header {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .hashtag-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+      }
+      .hashtag-name span {
+        color: var(--accent);
+      }
+      .hashtag-count {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* JSON viewer */
+      .json-toggle {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 14px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .json-toggle:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+      }
+
+      .json-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        line-height: 1.7;
+        overflow-x: auto;
+        max-height: 280px;
+        overflow-y: auto;
+        margin-top: 12px;
+        display: none;
+      }
+      .json-box.visible {
+        display: block;
+      }
+      .json-key {
+        color: var(--accent2);
+      }
+      .json-str {
+        color: #98d87a;
+      }
+      .json-num {
+        color: #f0a060;
+      }
+      .json-bool {
+        color: #c678dd;
+      }
+
+      /* Empty / loading states */
+      .empty-state {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--muted);
+      }
+      .empty-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+        opacity: 0.5;
+      }
+      .empty-text {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .loading-state {
+        text-align: center;
+        padding: 48px 20px;
+      }
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loading-text {
+        color: var(--muted);
+        font-size: 13px;
+        font-family: "DM Mono", monospace;
+      }
+
+      .error-state {
+        background: rgba(254, 44, 85, 0.06);
+        border: 1px solid rgba(254, 44, 85, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        color: var(--accent);
+        font-size: 13px;
+      }
+
+      /* Plans strip */
+      .plans-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 40px 0;
+        animation: fadeUp 0.5s 0.6s ease both;
+      }
+      .plan-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        position: relative;
+      }
+      .plan-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .plan-card.recommended {
+        border-color: var(--accent2);
+      }
+      .rec-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent2);
+        color: #000;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.05em;
+      }
+      .plan-name {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .plan-price {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .plan-calls {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 40px 0 52px;
+        color: var(--muted);
+        font-size: 13px;
+        animation: fadeUp 0.5s 0.7s ease both;
+      }
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .plans-strip {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .input-row {
+          flex-direction: column;
+        }
+        .run-btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .video-meta {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Playground — Featured previews
+        </div>
+        <h1>
+          TikTok Data,<br /><span class="r">Pro</span>grammable &
+          <span class="c">Fast</span>
+        </h1>
+        <p class="subtitle">
+          This page ships with
+          <strong>ready-to-run profile examples</strong> (top creators) and a
+          <strong>#viral</strong> hashtag preview. Anything
+          else opens <strong>TikTok Data Pro on RapidAPI</strong> so you can
+          query with your own key.
+        </p>
+        <div class="cta-bar">
+          <a
+            href="https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro"
+            target="_blank"
+            class="btn-primary"
+          >
+            🚀 Get API Key — 500 Free Calls
+          </a>
+          <a
+            href="https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro/pricing"
+            target="_blank"
+            class="btn-secondary"
+          >
+            View Pricing
+          </a>
+        </div>
+      </header>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('profile', this)">
+          👤 Profile Lookup
+        </button>
+        <button class="tab" onclick="switchTab('hashtag', this)">
+          # Hashtag Trends
+        </button>
+      </div>
+
+      <!-- Profile Panel -->
+      <div class="demo-panel" id="panel-profile">
+        <div class="panel-header">
+          <span class="method-badge">GET</span>
+          <span class="endpoint-path"
+            >/profile<span>?username=</span>{username}</span
+          >
+        </div>
+        <div class="panel-body">
+          <div class="input-row">
+            <div class="input-wrap">
+              <div class="input-label">
+                username <span class="required">*required</span>
+              </div>
+              <input
+                type="text"
+                id="profile-input"
+                placeholder="e.g. khaby.lame"
+                value="khaby.lame"
+              />
+            </div>
+            <button class="run-btn" id="profile-btn" onclick="runProfile()">
+              ▶ Run
+            </button>
+          </div>
+          <div class="featured-row">
+            <div class="featured-row-label">
+              Try a featured creator
+              <span class="hint">Tap to load · order reflects 2026 reach</span>
+            </div>
+            <div class="featured-chips" id="profile-featured-chips"></div>
+          </div>
+          <div class="result-area" id="profile-result">
+            <div class="empty-state">
+              <div class="empty-icon">👤</div>
+              <div class="empty-text">
+                Enter a username or pick a featured creator<br />to preview
+                profile fields
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hashtag Panel -->
+      <div class="demo-panel" id="panel-hashtag" style="display: none">
+        <div class="panel-header">
+          <span class="method-badge">GET</span>
+          <span class="endpoint-path"
+            >/hashtag<span>?tag=</span>{tag}<span>&limit=</span>{limit}</span
+          >
+        </div>
+        <div class="panel-body">
+          <div class="input-row">
+            <div class="input-wrap" style="flex: 2">
+              <div class="input-label">
+                tag <span class="required">*required</span>
+              </div>
+              <input
+                type="text"
+                id="hashtag-input"
+                placeholder="e.g. viral"
+                value="viral"
+              />
+            </div>
+            <div class="input-wrap" style="flex: 1">
+              <div class="input-label">
+                limit <span class="optional">optional</span>
+              </div>
+              <input
+                type="number"
+                id="limit-input"
+                placeholder="20"
+                value="5"
+                min="1"
+                max="20"
+              />
+            </div>
+            <button class="run-btn" id="hashtag-btn" onclick="runHashtag()">
+              ▶ Run
+            </button>
+          </div>
+          <div class="result-area" id="hashtag-result">
+            <div class="empty-state">
+              <div class="empty-icon">#</div>
+              <div class="empty-text">
+                Enter a hashtag and hit Run<br />to see trending videos
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans -->
+      <div class="plans-strip">
+        <div class="plan-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">$0</div>
+          <div class="plan-calls">500 calls/mo</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$9.99</div>
+          <div class="plan-calls">6,000 calls/mo</div>
+        </div>
+        <div class="plan-card recommended">
+          <div class="rec-badge">⭐ RECOMMENDED</div>
+          <div class="plan-name">Ultra</div>
+          <div class="plan-price">$39.99</div>
+          <div class="plan-calls">55,000 calls/mo</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Agency</div>
+          <div class="plan-price">$99.99</div>
+          <div class="plan-calls">250,000 calls/mo</div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Powered by <strong>TikTok Data Pro API</strong> &nbsp;·&nbsp;
+          <a
+            href="https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro"
+            target="_blank"
+            >Subscribe on RapidAPI</a
+          >
+          &nbsp;·&nbsp; 500 free calls · No credit card required
+        </p>
+      </footer>
+    </div>
+
+    <script src="demo-profiles.js"></script>
+    <script>
+      const RAPIDAPI_APP_URL =
+        "https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro";
+
+      /** Defaults must match the profile/hashtag inputs’ intended demo state. */
+      const DEFAULT_PROFILE_USERNAME = "khaby.lame";
+      const DEFAULT_HASHTAG_TAG = "viral";
+      const DEFAULT_HASHTAG_LIMIT = "5";
+
+      /**
+       * Reset playground fields before leaving for RapidAPI so back/forward cache
+       * and form restoration do not re-apply a non-demo query and re-trigger redirect.
+       */
+      function resetPlaygroundFormBeforeLeaving() {
+        const pi = document.getElementById("profile-input");
+        const hi = document.getElementById("hashtag-input");
+        const li = document.getElementById("limit-input");
+        if (pi) pi.value = DEFAULT_PROFILE_USERNAME;
+        if (hi) hi.value = DEFAULT_HASHTAG_TAG;
+        if (li) li.value = DEFAULT_HASHTAG_LIMIT;
+      }
+
+      function redirectToRapidApi() {
+        resetPlaygroundFormBeforeLeaving();
+        window.location.href = RAPIDAPI_APP_URL;
+      }
+
+      const MOCK_HASHTAG_VIRAL_FULL = {
+        success: true,
+        hashtag: "viral",
+        totalResults: 20,
+        data: [
+          {
+            videoId: "7625215339999120671",
+            description:
+              "🥹❤️‍🩹 couple love #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedit41",
+            plays: 1320,
+            likes: 34,
+            shares: 0,
+            comments: 3,
+            createdAt: "2026-04-05T10:11:43.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedit41/video/7625215339999120671",
+            music: { name: "SENDO", author: "Eluvo & Nxxkz & KPHK" },
+          },
+          {
+            videoId: "7625214178613153055",
+            description:
+              "🥹❤️‍🩹 Real love #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedit41",
+            plays: 1344,
+            likes: 56,
+            shares: 1,
+            comments: 1,
+            createdAt: "2026-04-05T10:07:33.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedit41/video/7625214178613153055",
+            music: { name: "SENDO", author: "Eluvo & Nxxkz & KPHK" },
+          },
+          {
+            videoId: "7560684469435288862",
+            description:
+              "If you don’t know what to post, try this 7 second post idea! How to go viral on tik tok in October #trendingsong #trendingsound #tiktokgrowth #tiktoktips ",
+            author: "madisonknowsbest",
+            plays: 4900000,
+            likes: 145100,
+            shares: 15900,
+            comments: 8782,
+            createdAt: "2025-10-13T12:37:49.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@madisonknowsbest/video/7560684469435288862",
+            music: {
+              name: "original sound",
+              author: "MadisonKnowsBest | Viral Coach",
+            },
+          },
+          {
+            videoId: "7625208845320736030",
+            description:
+              "❤️‍🩹🥹#couple #love #trinding #viral #trinding_video #viralvideo #trindingsound #viraltiktok #foryoupage #fypシ゚viral #fypviralvideo #1millionaudition ",
+            author: "sidragull257",
+            plays: 5289,
+            likes: 306,
+            shares: 14,
+            comments: 5,
+            createdAt: "2026-04-05T09:46:49.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@sidragull257/video/7625208845320736030",
+            music: {
+              name: "Btmana Ansak بتمني انساك",
+              author: 'عَــبــده||𝑩𝒐𝒅𝒂𝒂𝒂•:"💯🥷',
+            },
+          },
+          {
+            videoId: "7625214274801110303",
+            description:
+              "🥹❤️‍🩹 love view #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedit41",
+            plays: 612,
+            likes: 47,
+            shares: 0,
+            comments: 2,
+            createdAt: "2026-04-05T10:07:05.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedit41/video/7625214274801110303",
+            music: { name: "SENDO", author: "Eluvo & Nxxkz & KPHK" },
+          },
+          {
+            videoId: "7625213487622540575",
+            description:
+              "🥹❤️‍🩹 love view #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedit41",
+            plays: 767,
+            likes: 56,
+            shares: 0,
+            comments: 4,
+            createdAt: "2026-04-05T10:04:33.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedit41/video/7625213487622540575",
+            music: { name: "SENDO", author: "Eluvo & Nxxkz & KPHK" },
+          },
+          {
+            videoId: "7625222579124718868",
+            description: "#humor #tiktokviral #videoviral #trolagens ",
+            author: "barbye_1812",
+            plays: 2330,
+            likes: 70,
+            shares: 2,
+            comments: 4,
+            createdAt: "2026-04-05T10:38:11.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@barbye_1812/video/7625222579124718868",
+            music: { name: "Funny and Unusual Scene", author: "HarmonicoHCO" },
+          },
+          {
+            videoId: "7362677270667939114",
+            description: "Explaining the viral Chick-fil-A video!",
+            author: "thelolpodcast",
+            plays: 14400000,
+            likes: 1600000,
+            shares: 10600,
+            comments: 1576,
+            createdAt: "2024-04-27T22:28:30.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@thelolpodcast/video/7362677270667939114",
+            music: { name: "original sound", author: "Thelolpodcast" },
+          },
+          {
+            videoId: "7625218758726012182",
+            description:
+              "Legend moments 🗿😎#sigma #viralvideos #sigmamale #1millionaudition #foryoupage ",
+            author: "sigma___500",
+            plays: 8530,
+            likes: 722,
+            shares: 5,
+            comments: 7,
+            createdAt: "2026-04-05T10:23:18.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@sigma___500/video/7625218758726012182",
+            music: { name: "ESTOY - Super Slowed", author: "wharoxmane" },
+          },
+          {
+            videoId: "7625214221369806094",
+            description: "#fyp #foryoupage #viral #trending #tiktokviral ",
+            author: "usa.respect0",
+            plays: 498,
+            likes: 31,
+            shares: 0,
+            comments: 3,
+            createdAt: "2026-04-05T10:08:13.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@usa.respect0/video/7625214221369806094",
+            music: { name: "cosmic dream", author: "leadwave" },
+          },
+          {
+            videoId: "7597839998871670047",
+            description:
+              "TikTok creator @romeosshow made up a song about Dr. Pepper and posted the video on December 23. What started as an 11-second video has turned into an advertisement aired during college football's biggest game Monday night. Within a month, the video exploded in popularity, racking up over 35 million views on TikTok. After going viral, other brands such as Subway, Popeyes, Wingstop, Welch's Fruit Snacks and Buffalo Wild Wings left comments asking her to create jingles for them too.\n\n#DrPepper #viral #ad #jingle #collegefootball #branding #fyp #news",
+            author: "abc7newsbayarea",
+            plays: 3600000,
+            likes: 389800,
+            shares: 47000,
+            comments: 5011,
+            createdAt: "2026-01-21T15:39:47.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@abc7newsbayarea/video/7597839998871670047",
+            music: { name: "original sound - ABC7 News", author: "ABC7 News" },
+          },
+          {
+            videoId: "7625194632409894175",
+            description:
+              "🥹❤️‍🩹 couple love #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedite6",
+            plays: 2584,
+            likes: 86,
+            shares: 7,
+            comments: 4,
+            createdAt: "2026-04-05T08:50:58.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedite6/video/7625194632409894175",
+            music: { name: "اي والله مشتاقلك", author: "🎀" },
+          },
+          {
+            videoId: "7624951356389903647",
+            description:
+              "ootd trend song: rotation- stunna girl #fyp #trending #funny #ootd #viral",
+            author: "chasealiciousss",
+            plays: 215400,
+            likes: 26800,
+            shares: 4544,
+            comments: 1036,
+            createdAt: "2026-04-04T17:05:53.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@chasealiciousss/video/7624951356389903647",
+            music: { name: "original sound", author: "00raxkz" },
+          },
+          {
+            videoId: "7625218023300910356",
+            description:
+              "ignore mirror 🪞🥴#foryou #tiktok #treanding #fyp #viralvideo ",
+            author: "i.adiii",
+            plays: 311,
+            likes: 34,
+            shares: 0,
+            comments: 5,
+            createdAt: "2026-04-05T10:20:30.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@i.adiii/video/7625218023300910356",
+            music: {
+              name: "original sound - Saraiki Creator ✍️",
+              author: "Saraiki Creator ✍️",
+            },
+          },
+          {
+            videoId: "7625194803415895326",
+            description:
+              "🥹❤️‍🩹 Real love #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedite6",
+            plays: 4169,
+            likes: 148,
+            shares: 3,
+            comments: 2,
+            createdAt: "2026-04-05T08:51:22.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedite6/video/7625194803415895326",
+            music: { name: "اي والله مشتاقلك", author: "🎀" },
+          },
+          {
+            videoId: "7254383423282892075",
+            description:
+              'A new "bed rotting" trend on TikTok is raising concerns for mental health experts. The viral trend involves staying in bed all day to sleep, watching tv and being on your phone. #bedrotting #trend #tiktok #mentalhealth #health #bed #sleep #mentalhealthissues #mentalhealthproblems #news #fyp #foryoupage #abc7news ',
+            author: "abc7newsbayarea",
+            plays: 8700000,
+            likes: 405700,
+            shares: 132300,
+            comments: 21900,
+            createdAt: "2023-07-11T02:32:57.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@abc7newsbayarea/video/7254383423282892075",
+            music: { name: "original sound", author: "ABC7 News" },
+          },
+          {
+            videoId: "7625194935402204447",
+            description:
+              "🥹❤️‍🩹 couple #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedite6",
+            plays: 4372,
+            likes: 177,
+            shares: 10,
+            comments: 8,
+            createdAt: "2026-04-05T08:52:00.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedite6/video/7625194935402204447",
+            music: { name: "original sound", author: "its.reo1" },
+          },
+          {
+            videoId: "7333330245862329642",
+            description:
+              "#ViralBlitz #ViralBlitzRealm\n#fyp #fypシ゚viral #viralvideo #viraltiktok #fypツ #funny #funnyvideos #funnymoments \n#funnytiktok ",
+            author: "viralblitzrealm",
+            plays: 83800000,
+            likes: 3000000,
+            shares: 511900,
+            comments: 22600,
+            createdAt: "2024-02-08T20:27:18.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@viralblitzrealm/video/7333330245862329642",
+            music: { name: "original sound", author: "ViralBlitz" },
+          },
+          {
+            videoId: "6920744445344320774",
+            description:
+              "its been exactly one year since our most viral video so i thought id finally remake it;bb also ty guys for 133k<333",
+            author: "uhtatiana",
+            plays: 13700000,
+            likes: 2500000,
+            shares: 101000,
+            comments: 6028,
+            createdAt: "2021-01-23T00:23:20.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@uhtatiana/video/6920744445344320774",
+            music: { name: "Crystal Dolphin", author: "Engelwood" },
+          },
+          {
+            videoId: "7625194354885381407",
+            description:
+              "🥹❤️‍🩹 family love #lovestory #lovefimly #fyp #foryou #foryoupage #trending #tiktok #viraltiktok #viralvideo ",
+            author: "junaidedite6",
+            plays: 960,
+            likes: 70,
+            shares: 5,
+            comments: 2,
+            createdAt: "2026-04-05T08:49:45.000Z",
+            videoUrl:
+              "https://www.tiktok.com/@junaidedite6/video/7625194354885381407",
+            music: { name: "اي والله مشتاقلك", author: "🎀" },
+          },
+        ],
+      };
+
+      function delay(ms) {
+        return new Promise(function (resolve) {
+          setTimeout(resolve, ms);
+        });
+      }
+
+      function demoProfileDelayMs() {
+        return 260 + Math.floor(Math.random() * 520);
+      }
+
+      function getDemoProfiles() {
+        if (typeof TIKTOK_DEMO_PROFILES === "undefined") return null;
+        return TIKTOK_DEMO_PROFILES;
+      }
+
+      function switchTab(tab, el) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        el.classList.add("active");
+        document.getElementById("panel-profile").style.display =
+          tab === "profile" ? "block" : "none";
+        document.getElementById("panel-hashtag").style.display =
+          tab === "hashtag" ? "block" : "none";
+      }
+
+      function fmt(n) {
+        if (!n && n !== 0) return "—";
+        if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+        if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+        return n.toString();
+      }
+
+      function initFeaturedProfileChips() {
+        var wrap = document.getElementById("profile-featured-chips");
+        var order =
+          typeof TIKTOK_DEMO_PROFILE_ORDER !== "undefined"
+            ? TIKTOK_DEMO_PROFILE_ORDER
+            : [];
+        var profiles = getDemoProfiles();
+        if (!wrap || !profiles || !order.length) {
+          if (wrap) wrap.closest(".featured-row").style.display = "none";
+          return;
+        }
+        wrap.innerHTML = order
+          .map(function (u) {
+            var p = profiles[u];
+            if (!p || !p.data) return "";
+            var followers = p.data.followers;
+            var sub =
+              typeof followers === "number"
+                ? " · " + fmt(followers) + " followers"
+                : "";
+            return (
+              '<button type="button" class="featured-chip" data-user="' +
+              u.replace(/"/g, "&quot;") +
+              '" title="@' +
+              u +
+              sub +
+              '">@' +
+              u +
+              "</button>"
+            );
+          })
+          .join("");
+        wrap.addEventListener("click", function (e) {
+          var btn = e.target.closest(".featured-chip");
+          if (!btn || !btn.dataset.user) return;
+          document.getElementById("profile-input").value = btn.dataset.user;
+          runProfile();
+        });
+      }
+
+      function setLoading(resultId, btnId) {
+        document.getElementById(resultId).innerHTML = `
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-text">Fetching profile…</div>
+      </div>`;
+        document.getElementById(btnId).disabled = true;
+        document.getElementById(btnId).textContent = "⏳ Loading...";
+      }
+
+      function resetBtn(btnId, label) {
+        const btn = document.getElementById(btnId);
+        btn.disabled = false;
+        btn.innerHTML = label;
+      }
+
+      function syntaxHL(json) {
+        return JSON.stringify(json, null, 2)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+          .replace(/: "([^"]*)"/g, ': <span class="json-str">"$1"</span>')
+          .replace(/: (\d+\.?\d*)/g, ': <span class="json-num">$1</span>')
+          .replace(/: (true|false)/g, ': <span class="json-bool">$1</span>');
+      }
+
+      function jsonToggle(id, data) {
+        return `
+      <button class="json-toggle" onclick="
+        var b=document.getElementById('${id}');
+        b.classList.toggle('visible');
+        this.innerHTML=b.classList.contains('visible')?'▲ Hide JSON':'{ } View Raw JSON';
+      ">{ } View Raw JSON</button>
+      <div class="json-box" id="${id}"><pre>${syntaxHL(data)}</pre></div>
+    `;
+      }
+
+      // ── PROFILE ─────────────────────────────────────────────
+      async function runProfile() {
+        const username = document
+          .getElementById("profile-input")
+          .value.trim()
+          .replace("@", "");
+        if (!username) {
+          alert("Please enter a username");
+          return;
+        }
+
+        const profiles = getDemoProfiles();
+        if (!profiles) {
+          alert(
+            "Profile playground data failed to load. Check demo-profiles.js.",
+          );
+          return;
+        }
+
+        const key = username.toLowerCase();
+        if (!profiles[key]) {
+          redirectToRapidApi();
+          return;
+        }
+
+        setLoading("profile-result", "profile-btn");
+        const t0 = Date.now();
+
+        try {
+          await delay(demoProfileDelayMs());
+          const data = profiles[key];
+          const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+
+          const d = data.data;
+          const posts = (data.posts || []).slice(0, 5);
+
+          const avatarEl = d.avatar
+            ? `<img class="avatar" src="${d.avatar}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="avatar"><div class="avatar-placeholder" style="display:none">👤</div>`
+            : `<div class="avatar-placeholder">👤</div>`;
+
+          document.getElementById("profile-result").innerHTML = `
+        <div class="result-header">
+          <span class="status-pill success">✓ 200 OK</span>
+          <span class="result-time">${elapsed}s response time</span>
+        </div>
+
+        <div class="profile-card">
+          ${avatarEl}
+          <div class="profile-info">
+            <div class="profile-name">
+              ${d.nickname || d.name}
+              ${d.verified ? '<span class="verified">✓</span>' : ""}
+            </div>
+            <div class="profile-handle">@${d.name}</div>
+            ${d.bio ? `<div class="profile-bio">${d.bio}</div>` : ""}
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${fmt(d.followers)}</div>
+            <div class="stat-label">Followers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${fmt(d.following)}</div>
+            <div class="stat-label">Following</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${fmt(d.totalLikes)}</div>
+            <div class="stat-label">Total Likes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${fmt(d.totalVideos)}</div>
+            <div class="stat-label">Videos</div>
+          </div>
+        </div>
+
+        ${
+          posts.length
+            ? `
+          <div class="section-title">Latest Posts</div>
+          <div class="videos-list">
+            ${posts
+              .map(
+                (v, i) => `
+              <div class="video-card">
+                <div class="video-thumb">🎬</div>
+                <div class="video-desc">${v.description || "(no caption)"}</div>
+                <div class="video-meta">
+                  <span class="vm">▶ ${fmt(v.plays)}</span>
+                  <span class="vm">❤ ${fmt(v.likes)}</span>
+                  <span class="vm">🔁 ${fmt(v.shares)}</span>
+                </div>
+              </div>
+            `,
+              )
+              .join("")}
+          </div>
+        `
+            : ""
+        }
+
+        <div style="margin-top:16px">${jsonToggle("json-profile", data)}</div>
+      `;
+        } catch (e) {
+          document.getElementById("profile-result").innerHTML = `
+        <div class="result-header">
+          <span class="status-pill error">✕ Error</span>
+        </div>
+        <div class="error-state">⚠️ ${e.message}<br><small style="color:var(--muted);margin-top:8px;display:block">Make sure the username is public and spelled correctly.</small></div>
+      `;
+        }
+
+        resetBtn("profile-btn", "▶ Run");
+      }
+
+      // ── HASHTAG ──────────────────────────────────────────────
+      async function runHashtag() {
+        const tag = document
+          .getElementById("hashtag-input")
+          .value.trim()
+          .replace("#", "");
+        const limit = document.getElementById("limit-input").value || 5;
+        if (!tag) {
+          alert("Please enter a hashtag");
+          return;
+        }
+
+        if (tag.toLowerCase() !== "viral") {
+          redirectToRapidApi();
+          return;
+        }
+
+        setLoading("hashtag-result", "hashtag-btn");
+        const t0 = Date.now();
+
+        try {
+          await delay(260 + Math.floor(Math.random() * 380));
+          const lim = Math.min(
+            20,
+            Math.max(1, parseInt(String(limit), 10) || 5),
+          );
+          const data = {
+            success: MOCK_HASHTAG_VIRAL_FULL.success,
+            hashtag: MOCK_HASHTAG_VIRAL_FULL.hashtag,
+            totalResults: lim,
+            data: MOCK_HASHTAG_VIRAL_FULL.data.slice(0, lim),
+          };
+          const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+
+          const videos = data.data || [];
+
+          document.getElementById("hashtag-result").innerHTML = `
+        <div class="result-header">
+          <span class="status-pill success">✓ 200 OK</span>
+          <span class="result-time">${elapsed}s response time</span>
+        </div>
+
+        <div class="hashtag-header">
+          <div class="hashtag-name"><span>#</span>${tag}</div>
+          <div class="hashtag-count">${videos.length} results returned</div>
+        </div>
+
+        <div class="section-title">Top Videos</div>
+        <div class="videos-list">
+          ${videos
+            .map(
+              (v) => `
+            <div class="video-card">
+              <div class="video-thumb">🎬</div>
+              <div style="flex:1;min-width:0">
+                <div class="video-desc">${v.description || "(no caption)"}</div>
+                <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px">@${v.author} · ${v.music?.name || ""}</div>
+              </div>
+              <div class="video-meta">
+                <span class="vm">▶ ${fmt(v.plays)}</span>
+                <span class="vm">❤ ${fmt(v.likes)}</span>
+                <span class="vm">🔁 ${fmt(v.shares)}</span>
+              </div>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+
+        <div style="margin-top:16px">${jsonToggle("json-hashtag", data)}</div>
+      `;
+        } catch (e) {
+          document.getElementById("hashtag-result").innerHTML = `
+        <div class="result-header">
+          <span class="status-pill error">✕ Error</span>
+        </div>
+        <div class="error-state">⚠️ ${e.message}</div>
+      `;
+        }
+
+        resetBtn("hashtag-btn", "▶ Run");
+      }
+
+      window.addEventListener("load", function () {
+        initFeaturedProfileChips();
+        const profiles = getDemoProfiles();
+        const key = document
+          .getElementById("profile-input")
+          .value.trim()
+          .replace("@", "")
+          .toLowerCase();
+        if (profiles && key && profiles[key]) {
+          setTimeout(runProfile, 600);
+        }
+      });
+    </script>
+  </body>
+</html>
