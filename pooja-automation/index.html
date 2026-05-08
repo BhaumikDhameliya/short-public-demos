@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Pooja Automation · Industrial Shrink Wrap Machinery</title>
+<meta name="description" content="Pooja Automation — engineering precision shrink wrapping machinery and packaging automation systems for India and beyond. Two decades of industrial expertise." />
+<meta name="theme-color" content="#05060a" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:      '#05060a',
+          ink2:     '#080a12',
+          surface:  '#0a0c14',
+          surface2: '#10131e',
+          line:     '#1c2030',
+          line2:    '#262b3d',
+          chrome:   '#cbd0dc',
+          dim:      '#8489a0',
+          mute:     '#5d6478',
+          glow1:    '#00d9ff',
+          glow2:    '#7c5cff',
+          glow3:    '#3effd2',
+          warm:     '#ffb464',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+          sans:    ['"Inter"', 'system-ui', 'sans-serif'],
+          mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          'tightest': '-0.04em',
+          'extra':    '0.18em',
+        },
+      }
+    }
+  }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/+esm"
+  }
+}
+</script>
+
+<style>
+  html, body { background: #05060a; color: #cbd0dc; }
+  body { -webkit-font-smoothing: antialiased; }
+
+  /* Hide horizontal overflow only — Lenis controls vertical */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+  /* Subtle global grain */
+  body::after {
+    content:''; position: fixed; inset:0; pointer-events:none; z-index: 1;
+    background-image: radial-gradient(rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: 0.4;
+  }
+
+  /* Animated gradient backdrop behind canvas */
+  .bg-aurora {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(60vw 60vw at 12% 18%, rgba(0,217,255,0.10), transparent 60%),
+      radial-gradient(50vw 50vw at 88% 30%, rgba(124,92,255,0.10), transparent 60%),
+      radial-gradient(40vw 40vw at 50% 110%, rgba(62,255,210,0.06), transparent 65%),
+      linear-gradient(180deg, #05060a 0%, #06080f 100%);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: linear-gradient(180deg, rgba(20,24,38,0.55), rgba(8,10,18,0.75));
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid rgba(203,208,220,0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 16px 60px -20px rgba(0,0,0,0.7);
+  }
+  .glass-soft {
+    background: linear-gradient(180deg, rgba(20,24,38,0.35), rgba(8,10,18,0.55));
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(203,208,220,0.06);
+  }
+
+  /* Metallic ring border using mask */
+  .metallic-ring { position: relative; isolation: isolate; }
+  .metallic-ring::before {
+    content:''; position:absolute; inset:0; border-radius: inherit; padding:1px;
+    background: linear-gradient(135deg,
+      rgba(0,217,255,0.55) 0%,
+      rgba(203,208,220,0.18) 32%,
+      rgba(124,92,255,0.4) 64%,
+      rgba(255,255,255,0.04) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events:none;
+  }
+
+  /* Neon underline */
+  .neon-line {
+    background: linear-gradient(90deg, transparent, #00d9ff 30%, #7c5cff 70%, transparent);
+    height: 1px; width: 100%;
+  }
+
+  /* Hover sheen on cards */
+  .sheen { position: relative; overflow: hidden; }
+  .sheen::after {
+    content:''; position: absolute; top:0; left:-150%;
+    width: 60%; height:100%;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.10) 50%, transparent 70%);
+    transition: left 0.9s cubic-bezier(.2,.8,.2,1);
+    pointer-events:none;
+  }
+  .sheen:hover::after { left: 150%; }
+
+  /* Marquee track */
+  @keyframes marquee {
+    from { transform: translate3d(0,0,0); }
+    to   { transform: translate3d(-50%,0,0); }
+  }
+  .marquee-track { animation: marquee 38s linear infinite; will-change: transform; }
+
+  /* Scroll cue */
+  @keyframes scrollCue {
+    0%   { transform: translateY(-6px); opacity: 0; }
+    35%  { opacity: 1; }
+    100% { transform: translateY(10px); opacity: 0; }
+  }
+  .scroll-cue::after {
+    content:''; display:block; width: 4px; height: 4px; border-radius: 9999px;
+    background: #00d9ff; margin: 6px auto 0;
+    animation: scrollCue 1.6s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(0,217,255,0.7);
+  }
+
+  /* Section number tag */
+  .num-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; letter-spacing: 0.2em; color: #5d6478;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    position: relative; display:inline-flex; align-items:center; gap:10px;
+    padding: 14px 22px; border-radius: 999px; font-weight: 500;
+    color: #05060a; background: linear-gradient(135deg, #d6f9ff 0%, #00d9ff 50%, #7c5cff 100%);
+    transition: transform .25s ease, box-shadow .25s ease;
+    box-shadow: 0 10px 40px -10px rgba(0,217,255,0.4), inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -12px rgba(124,92,255,0.55), inset 0 1px 0 rgba(255,255,255,0.6); }
+  .btn-ghost {
+    display:inline-flex; align-items:center; gap:10px;
+    padding: 14px 22px; border-radius: 999px; font-weight: 500;
+    color: #cbd0dc; border: 1px solid rgba(203,208,220,0.18);
+    background: rgba(20,24,38,0.4); backdrop-filter: blur(8px);
+    transition: all .25s ease;
+  }
+  .btn-ghost:hover { border-color: rgba(0,217,255,0.45); color: #fff; }
+
+  /* Input fields */
+  .field {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(8,10,18,0.6);
+    border: 1px solid rgba(203,208,220,0.10);
+    border-radius: 12px;
+    color: #f1f3f7;
+    font-family: inherit;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .field:focus {
+    outline: none;
+    border-color: rgba(0,217,255,0.55);
+    box-shadow: 0 0 0 4px rgba(0,217,255,0.10);
+    background: rgba(10,14,24,0.85);
+  }
+  .field::placeholder { color: #5d6478; }
+
+  /* Loader */
+  #loader {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    background: #05060a;
+    transition: opacity .8s ease, visibility .8s ease;
+  }
+  #loader.done { opacity: 0; visibility: hidden; }
+  .loader-bar {
+    width: 200px; height: 1px; background: rgba(203,208,220,0.10); position: relative; overflow: hidden;
+  }
+  .loader-bar > span {
+    position: absolute; left: 0; top:0; bottom:0; width: 0;
+    background: linear-gradient(90deg, #00d9ff, #7c5cff);
+    box-shadow: 0 0 12px rgba(0,217,255,0.6);
+    transition: width .2s ease;
+  }
+
+  /* Hide tap highlight */
+  * { -webkit-tap-highlight-color: transparent; }
+
+  /* Reveal helper (set initial via CSS so no FOUC) */
+  .rv { opacity: 0; transform: translateY(28px); }
+
+  /* Tilt cards */
+  .tilt { transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+  .tilt-inner { transform: translateZ(40px); }
+
+  /* Spec line */
+  .spec-row { display:flex; justify-content:space-between; gap:20px; padding: 14px 0; border-top: 1px dashed rgba(203,208,220,0.08); }
+  .spec-row:first-child { border-top: 0; }
+
+  /* Selection */
+  ::selection { background: rgba(0,217,255,0.35); color: #fff; }
+
+  /* Scrollbar (when overflow) */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0a0c14; }
+  ::-webkit-scrollbar-thumb { background: #1c2030; border-radius: 999px; }
+
+  /* Mobile-friendly tweaks */
+  @media (max-width: 640px) {
+    .hide-sm { display: none; }
+  }
+
+  /* Process line connector */
+  .process-line {
+    position: absolute; top: 28px; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,217,255,0.5), rgba(124,92,255,0.5), transparent);
+  }
+
+  /* Indicator dot */
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.45; transform: scale(0.85); }
+  }
+  .pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+
+  /* Logo mark animation */
+  @keyframes logoSpin { to { transform: rotate(360deg); } }
+  .logo-ring { animation: logoSpin 8s linear infinite; }
+
+  /* Badge */
+  .badge {
+    display:inline-flex; align-items:center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(0,217,255,0.08);
+    border: 1px solid rgba(0,217,255,0.25);
+    color: #d8f9ff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+</style>
+</head>
+
+<body class="bg-ink text-chrome font-sans antialiased overflow-x-hidden">
+
+<!-- Aurora gradient backdrop -->
+<div class="bg-aurora"></div>
+
+<!-- WebGL canvas (full viewport, fixed) -->
+<canvas id="webgl" class="fixed inset-0 z-[2] pointer-events-none"></canvas>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="font-display text-[28px] font-semibold tracking-tightest text-white mb-5">
+    POOJA <span class="text-glow1">·</span> AUTOMATION
+  </div>
+  <div class="loader-bar"><span id="loaderFill"></span></div>
+  <div class="mt-4 text-[10px] tracking-extra uppercase text-mute font-mono">Initializing systems</div>
+</div>
+
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-40 px-5 sm:px-8 pt-5">
+  <div class="max-w-[1280px] mx-auto glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between metallic-ring">
+    <a href="#hero" class="flex items-center gap-3 group">
+      <span class="relative w-8 h-8 grid place-items-center">
+        <span class="absolute inset-0 rounded-full border border-glow1/40 logo-ring"></span>
+        <span class="absolute inset-1 rounded-full border border-glow2/30 logo-ring" style="animation-direction: reverse; animation-duration: 12s;"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-glow1 shadow-[0_0_12px_#00d9ff]"></span>
+      </span>
+      <span class="font-display font-semibold tracking-tight text-white">
+        Pooja <span class="text-dim font-light">Automation</span>
+      </span>
+    </a>
+    <div class="hidden md:flex items-center gap-7 text-[13px] text-dim">
+      <a href="#machines"   class="hover:text-white transition-colors">Machines</a>
+      <a href="#featured"   class="hover:text-white transition-colors">Featured</a>
+      <a href="#process"    class="hover:text-white transition-colors">Process</a>
+      <a href="#about"      class="hover:text-white transition-colors">About</a>
+      <a href="#contact"    class="hover:text-white transition-colors">Contact</a>
+    </div>
+    <a href="#contact" class="group flex items-center gap-2 text-[13px] font-medium text-white">
+      <span class="hidden sm:inline">Get a quote</span>
+      <span class="w-7 h-7 rounded-full bg-glow1 grid place-items-center text-ink transition-all group-hover:scale-110 group-hover:bg-white shadow-[0_0_18px_rgba(0,217,255,0.5)]">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
+    </a>
+  </div>
+</nav>
+
+<main class="relative z-10">
+
+  <!-- ───────────────── HERO ───────────────── -->
+  <section id="hero" class="relative min-h-[100svh] flex items-center pt-28 pb-16 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto w-full grid lg:grid-cols-12 gap-10 items-center">
+
+      <div class="lg:col-span-7">
+        <div class="badge mb-7 rv">
+          <span class="w-1.5 h-1.5 rounded-full bg-glow1 pulse-dot"></span>
+          Industrial Packaging Automation · Est. Delhi
+        </div>
+        <h1 class="font-display text-[clamp(44px,7.6vw,108px)] leading-[0.92] tracking-tightest font-semibold text-white">
+          <span class="block rv">Engineering</span>
+          <span class="block rv">
+            <span class="bg-gradient-to-r from-glow3 via-glow1 to-glow2 bg-clip-text text-transparent">precision</span>
+            in motion.
+          </span>
+        </h1>
+        <p class="mt-7 max-w-[540px] text-[15px] sm:text-base leading-[1.7] text-dim rv">
+          Pooja Automation builds industrial-grade shrink wrapping machinery and packaging
+          automation systems for manufacturers across India and beyond. Two decades of
+          mechanical craft, refined for the modern factory floor.
+        </p>
+        <div class="mt-9 flex flex-wrap gap-3 rv">
+          <a href="#machines" class="btn-primary">
+            Explore machines
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#contact" class="btn-ghost">
+            Request inquiry
+          </a>
+        </div>
+
+        <div class="mt-12 grid grid-cols-3 gap-6 max-w-[520px] rv">
+          <div>
+            <div class="font-display text-2xl sm:text-3xl text-white font-medium">20<span class="text-glow1">+</span></div>
+            <div class="text-[11px] tracking-wider uppercase text-mute mt-1">Years of build</div>
+          </div>
+          <div>
+            <div class="font-display text-2xl sm:text-3xl text-white font-medium">2k<span class="text-glow1">+</span></div>
+            <div class="text-[11px] tracking-wider uppercase text-mute mt-1">Machines deployed</div>
+          </div>
+          <div>
+            <div class="font-display text-2xl sm:text-3xl text-white font-medium">14</div>
+            <div class="text-[11px] tracking-wider uppercase text-mute mt-1">Industries served</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column — floating spec card overlay -->
+      <div class="lg:col-span-5 hidden lg:flex justify-end">
+        <div class="glass metallic-ring rounded-2xl p-6 w-[360px] rv">
+          <div class="flex items-center justify-between mb-4">
+            <div class="num-tag">SYS / 001</div>
+            <span class="badge"><span class="w-1.5 h-1.5 rounded-full bg-glow3 pulse-dot"></span> Live</span>
+          </div>
+          <div class="font-display text-[20px] text-white font-medium leading-snug">
+            Plastic Shrink<br/>Wrapping Machine
+          </div>
+          <div class="text-xs text-dim mt-1.5 font-mono">PSW-Series · 2026</div>
+
+          <div class="mt-5">
+            <div class="spec-row text-xs">
+              <span class="text-mute">Speed</span>
+              <span class="text-chrome font-mono">12–25 packs/min</span>
+            </div>
+            <div class="spec-row text-xs">
+              <span class="text-mute">Tunnel size</span>
+              <span class="text-chrome font-mono">450 × 300 mm</span>
+            </div>
+            <div class="spec-row text-xs">
+              <span class="text-mute">Power</span>
+              <span class="text-chrome font-mono">3-Φ · 415V</span>
+            </div>
+            <div class="spec-row text-xs">
+              <span class="text-mute">Film</span>
+              <span class="text-chrome font-mono">LDPE · POF · PVC</span>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-line2/60 flex items-center justify-between">
+            <div class="text-[11px] text-mute uppercase tracking-wider">Drag, scroll, explore</div>
+            <a href="#featured" class="text-glow1 text-xs font-medium flex items-center gap-1.5 hover:gap-2.5 transition-all">
+              View specs
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-7 left-1/2 -translate-x-1/2 scroll-cue text-[10px] tracking-extra uppercase text-mute font-mono">Scroll</div>
+
+    <!-- Bottom edge fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-ink pointer-events-none"></div>
+  </section>
+
+
+  <!-- ───────────────── MARQUEE ───────────────── -->
+  <section class="relative py-10 border-y border-line/60 overflow-hidden bg-ink2/50">
+    <div class="flex marquee-track w-max">
+      <div class="flex items-center gap-12 px-6 font-display text-[clamp(28px,4vw,52px)] tracking-tightest font-medium text-chrome whitespace-nowrap">
+        <span>Shrink Wrap Technology</span><span class="text-glow1">◆</span>
+        <span>Heat Tunnel Engineering</span><span class="text-glow2">◆</span>
+        <span>Conveyor Automation</span><span class="text-glow3">◆</span>
+        <span>L-Sealer Systems</span><span class="text-glow1">◆</span>
+        <span>Strapping Machinery</span><span class="text-glow2">◆</span>
+        <span>Made in India</span><span class="text-glow3">◆</span>
+      </div>
+      <div aria-hidden="true" class="flex items-center gap-12 px-6 font-display text-[clamp(28px,4vw,52px)] tracking-tightest font-medium text-chrome whitespace-nowrap">
+        <span>Shrink Wrap Technology</span><span class="text-glow1">◆</span>
+        <span>Heat Tunnel Engineering</span><span class="text-glow2">◆</span>
+        <span>Conveyor Automation</span><span class="text-glow3">◆</span>
+        <span>L-Sealer Systems</span><span class="text-glow1">◆</span>
+        <span>Strapping Machinery</span><span class="text-glow2">◆</span>
+        <span>Made in India</span><span class="text-glow3">◆</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── ABOUT ───────────────── -->
+  <section id="about" class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-12">
+        <span class="num-tag">/ 01</span>
+        <span class="text-mute text-xs tracking-extra uppercase">About the workshop</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+        <div class="lg:col-span-7">
+          <h2 class="font-display text-[clamp(34px,4.6vw,68px)] leading-[1.05] tracking-tightest font-medium text-white rv">
+            Built by hands that have<br/>
+            <span class="text-dim italic font-light">shipped two thousand machines</span>
+          </h2>
+        </div>
+        <div class="lg:col-span-5 text-[15px] leading-[1.8] text-dim rv">
+          <p>
+            Founded in Badli, Delhi, Pooja Automation has spent two decades on a single
+            obsession — translating mechanical engineering into reliable, repeatable
+            packaging output. Every shrink tunnel we ship has been hand-tuned on a
+            real conveyor by an engineer who can hear what's wrong before instruments do.
+          </p>
+          <p class="mt-4">
+            We design, fabricate, and assemble in-house. No drop-shipping, no rebadging.
+            Just steel, control panels, and the kind of after-sales support that
+            keeps a factory's line moving at 2 a.m.
+          </p>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass metallic-ring rounded-2xl p-6 sheen rv">
+          <div class="num-tag">/ output</div>
+          <div class="mt-3 font-display text-3xl sm:text-4xl text-white font-medium" data-counter data-target="2200">0</div>
+          <div class="text-xs text-dim mt-1">Machines shipped</div>
+        </div>
+        <div class="glass metallic-ring rounded-2xl p-6 sheen rv">
+          <div class="num-tag">/ reach</div>
+          <div class="mt-3 font-display text-3xl sm:text-4xl text-white font-medium"><span data-counter data-target="22">0</span><span class="text-glow1">+</span></div>
+          <div class="text-xs text-dim mt-1">Indian states served</div>
+        </div>
+        <div class="glass metallic-ring rounded-2xl p-6 sheen rv">
+          <div class="num-tag">/ uptime</div>
+          <div class="mt-3 font-display text-3xl sm:text-4xl text-white font-medium"><span data-counter data-target="99">0</span>.4<span class="text-glow1">%</span></div>
+          <div class="text-xs text-dim mt-1">Avg. machine availability</div>
+        </div>
+        <div class="glass metallic-ring rounded-2xl p-6 sheen rv">
+          <div class="num-tag">/ team</div>
+          <div class="mt-3 font-display text-3xl sm:text-4xl text-white font-medium"><span data-counter data-target="48">0</span></div>
+          <div class="text-xs text-dim mt-1">Engineers & fabricators</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── FEATURED MACHINE (pinned scroll) ───────────────── -->
+  <section id="featured" class="relative">
+
+    <!-- Pinned wrapper -->
+    <div id="featured-pin" class="relative h-[300vh]">
+      <div class="sticky top-0 h-[100svh] flex items-center px-5 sm:px-8 overflow-hidden">
+        <div class="max-w-[1280px] mx-auto w-full grid lg:grid-cols-12 gap-10 items-center">
+
+          <!-- Left: callouts that switch between scroll stages -->
+          <div class="lg:col-span-5 relative">
+            <div class="flex items-center gap-3 mb-8">
+              <span class="num-tag">/ 02</span>
+              <span class="text-mute text-xs tracking-extra uppercase">Featured · Plastic Shrink Wrapper</span>
+            </div>
+
+            <h3 class="font-display text-[clamp(34px,4.4vw,60px)] tracking-tightest font-medium text-white leading-[1.05] mb-2">
+              <span class="bg-gradient-to-r from-white via-glow1/90 to-glow2 bg-clip-text text-transparent">PSW-450</span><br/>
+              <span class="text-chrome">Industrial line</span>
+            </h3>
+            <div class="text-xs text-mute font-mono mb-7">REF: tradeindia/5325717</div>
+
+            <!-- Stage panels — only one is visible at a time, switched via GSAP -->
+            <div class="relative h-[260px]">
+
+              <article class="featured-stage absolute inset-0 transition-opacity" data-stage="0">
+                <div class="badge mb-4">01 — Conveyor</div>
+                <h4 class="font-display text-2xl text-white mb-3">A belt that doesn't stutter</h4>
+                <p class="text-dim text-[14px] leading-[1.75] max-w-md">
+                  PU-coated belt over a fabricated MS frame, driven by a VFD-controlled
+                  geared motor. Speed is dialled in real time from the HMI, so packaging
+                  cadence stays locked to the upstream filler.
+                </p>
+              </article>
+
+              <article class="featured-stage absolute inset-0 transition-opacity opacity-0" data-stage="1">
+                <div class="badge mb-4">02 — Heat Tunnel</div>
+                <h4 class="font-display text-2xl text-white mb-3">Even heat, shrink without scorch</h4>
+                <p class="text-dim text-[14px] leading-[1.75] max-w-md">
+                  Stainless inner chamber, 8 finned heaters, recirculating turbine fans.
+                  PID closed loop holds the chamber within ±2°C end-to-end so the
+                  film grips uniformly across every face of the pack.
+                </p>
+              </article>
+
+              <article class="featured-stage absolute inset-0 transition-opacity opacity-0" data-stage="2">
+                <div class="badge mb-4">03 — Control</div>
+                <h4 class="font-display text-2xl text-white mb-3">Operator-first HMI</h4>
+                <p class="text-dim text-[14px] leading-[1.75] max-w-md">
+                  7-inch capacitive touch with recipe storage, fault diagnostics, and
+                  shift counters. Works in low light, dust, and 45°C plant heat —
+                  because that's where it lives.
+                </p>
+              </article>
+
+            </div>
+
+            <a href="#contact" class="btn-ghost mt-8">
+              Request demo on this model
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <!-- Right: visual frame for the WebGL machine — Three.js model is rendered into the global canvas, but we provide a "viewport" decoration here -->
+          <div class="lg:col-span-7 relative h-[60svh] lg:h-[75svh]">
+            <!-- Decorative HUD frame -->
+            <div class="absolute inset-0 pointer-events-none">
+              <!-- Corner markers -->
+              <div class="absolute top-0 left-0 w-7 h-7 border-l border-t border-glow1/60"></div>
+              <div class="absolute top-0 right-0 w-7 h-7 border-r border-t border-glow1/60"></div>
+              <div class="absolute bottom-0 left-0 w-7 h-7 border-l border-b border-glow2/60"></div>
+              <div class="absolute bottom-0 right-0 w-7 h-7 border-r border-b border-glow2/60"></div>
+
+              <!-- HUD lines -->
+              <div class="absolute top-3 left-12 right-12 flex items-center gap-3 text-[10px] tracking-extra uppercase text-mute font-mono">
+                <span class="w-1 h-1 rounded-full bg-glow1 pulse-dot"></span>
+                Live render · WebGL
+                <span class="flex-1 h-px bg-line/80"></span>
+                <span id="featured-stage-label">01 / 03</span>
+              </div>
+              <div class="absolute bottom-3 left-12 right-12 flex items-center justify-between text-[10px] tracking-extra uppercase text-mute font-mono">
+                <span>Mat: chrome 304SS</span>
+                <span>Δ rotate · Φ pin</span>
+                <span>Build: PSW-450</span>
+              </div>
+            </div>
+
+            <!-- Caption pill -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 glass-soft rounded-full px-4 py-2 text-xs text-dim metallic-ring">
+              <span class="text-glow1 font-mono">●</span> Scroll to inspect
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ───────────────── MACHINES / PRODUCTS GRID ───────────────── -->
+  <section id="machines" class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-10">
+        <span class="num-tag">/ 03</span>
+        <span class="text-mute text-xs tracking-extra uppercase">The machine catalogue</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <div class="flex items-end justify-between flex-wrap gap-6 mb-14">
+        <h2 class="font-display text-[clamp(34px,4.6vw,68px)] leading-[1] tracking-tightest font-medium text-white max-w-3xl rv">
+          A family of machines for<br/>
+          <span class="text-dim italic font-light">every line speed</span>
+        </h2>
+        <div class="text-dim text-sm max-w-sm rv">
+          From semi-automatic L-sealers to fully automatic web sealing systems —
+          tuned for line speeds from 8 to 60+ packs per minute.
+        </div>
+      </div>
+
+      <div id="machine-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── MANUFACTURING PROCESS ───────────────── -->
+  <section id="process" class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-10">
+        <span class="num-tag">/ 04</span>
+        <span class="text-mute text-xs tracking-extra uppercase">From drawing to dispatch</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <h2 class="font-display text-[clamp(34px,4.6vw,68px)] leading-[1] tracking-tightest font-medium text-white max-w-3xl mb-16 rv">
+        How a Pooja machine<br/>
+        <span class="text-dim italic font-light">comes to life</span>
+      </h2>
+
+      <div class="relative grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="hidden lg:block process-line"></div>
+
+        <!-- Step 1 -->
+        <div class="relative rv">
+          <div class="relative z-10 w-14 h-14 rounded-full glass metallic-ring grid place-items-center mb-6">
+            <span class="font-mono text-glow1 text-sm">01</span>
+          </div>
+          <h4 class="font-display text-xl text-white mb-2">Engineering</h4>
+          <p class="text-sm text-dim leading-[1.7]">CAD-led design tailored to the customer's product, throughput target and floor plan. No off-the-shelf assumptions.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="relative rv">
+          <div class="relative z-10 w-14 h-14 rounded-full glass metallic-ring grid place-items-center mb-6">
+            <span class="font-mono text-glow1 text-sm">02</span>
+          </div>
+          <h4 class="font-display text-xl text-white mb-2">Fabrication</h4>
+          <p class="text-sm text-dim leading-[1.7]">In-house laser cutting, CNC bending, TIG welding and powder coating in our 14,000 sq.ft Badli workshop.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="relative rv">
+          <div class="relative z-10 w-14 h-14 rounded-full glass metallic-ring grid place-items-center mb-6">
+            <span class="font-mono text-glow1 text-sm">03</span>
+          </div>
+          <h4 class="font-display text-xl text-white mb-2">Assembly</h4>
+          <p class="text-sm text-dim leading-[1.7]">Mechanical, electrical and pneumatic assembly under one roof. Branded components only — Schneider, Siemens, Mitsubishi.</p>
+        </div>
+        <!-- Step 4 -->
+        <div class="relative rv">
+          <div class="relative z-10 w-14 h-14 rounded-full glass metallic-ring grid place-items-center mb-6">
+            <span class="font-mono text-glow1 text-sm">04</span>
+          </div>
+          <h4 class="font-display text-xl text-white mb-2">Commissioning</h4>
+          <p class="text-sm text-dim leading-[1.7]">8-hour run-in, customer FAT, on-site installation and operator training. Backed by 12-month warranty and pan-India service.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── INDUSTRIES SERVED ───────────────── -->
+  <section class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-10">
+        <span class="num-tag">/ 05</span>
+        <span class="text-mute text-xs tracking-extra uppercase">Industries we wrap</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <h2 class="font-display text-[clamp(34px,4.6vw,68px)] leading-[1] tracking-tightest font-medium text-white max-w-3xl mb-14 rv">
+        Trusted across<br/>
+        <span class="text-dim italic font-light">India's manufacturing floors</span>
+      </h2>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-line2/40 rounded-2xl overflow-hidden metallic-ring">
+        <!-- Industry tiles — JS will fill these via dataset -->
+        <div class="industry-tile bg-surface" data-industry="Pharmaceuticals" data-icon="pill"></div>
+        <div class="industry-tile bg-surface" data-industry="Food &amp; Beverage" data-icon="bottle"></div>
+        <div class="industry-tile bg-surface" data-industry="Cosmetics" data-icon="spray"></div>
+        <div class="industry-tile bg-surface" data-industry="Stationery" data-icon="book"></div>
+        <div class="industry-tile bg-surface" data-industry="Electronics" data-icon="chip"></div>
+        <div class="industry-tile bg-surface" data-industry="Hardware" data-icon="bolt"></div>
+        <div class="industry-tile bg-surface" data-industry="Textiles" data-icon="thread"></div>
+        <div class="industry-tile bg-surface" data-industry="Dairy" data-icon="drop"></div>
+        <div class="industry-tile bg-surface" data-industry="Spices" data-icon="leaf"></div>
+        <div class="industry-tile bg-surface" data-industry="Glass" data-icon="diamond"></div>
+        <div class="industry-tile bg-surface" data-industry="Auto Parts" data-icon="gear"></div>
+        <div class="industry-tile bg-surface" data-industry="Edibles" data-icon="bag"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── WHY US ───────────────── -->
+  <section class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-10">
+        <span class="num-tag">/ 06</span>
+        <span class="text-mute text-xs tracking-extra uppercase">Why Pooja</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="glass metallic-ring rounded-2xl p-7 sheen rv">
+          <svg class="w-7 h-7 text-glow1 mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h4 class="font-display text-lg text-white mb-2">Built to last</h4>
+          <p class="text-sm text-dim leading-[1.7]">Heavy-gauge steel frames and branded electricals. Customers run our 2008 units today.</p>
+        </div>
+
+        <div class="glass metallic-ring rounded-2xl p-7 sheen rv">
+          <svg class="w-7 h-7 text-glow2 mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>
+          <h4 class="font-display text-lg text-white mb-2">Fully customisable</h4>
+          <p class="text-sm text-dim leading-[1.7]">Tunnel size, conveyor length, control philosophy — every machine engineered to your line.</p>
+        </div>
+
+        <div class="glass metallic-ring rounded-2xl p-7 sheen rv">
+          <svg class="w-7 h-7 text-glow3 mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 4 4 5-6"/></svg>
+          <h4 class="font-display text-lg text-white mb-2">Proven throughput</h4>
+          <p class="text-sm text-dim leading-[1.7]">Up to 60+ packs/min on our top-line auto sealers, validated across 2,000+ deployments.</p>
+        </div>
+
+        <div class="glass metallic-ring rounded-2xl p-7 sheen rv">
+          <svg class="w-7 h-7 text-warm mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V21a1 1 0 0 1-1.09 1A19.86 19.86 0 0 1 2 4.09 1 1 0 0 1 3 3h4.09a1 1 0 0 1 1 .75c.16.83.4 1.62.72 2.36a1 1 0 0 1-.23 1.05L7.21 8.79a16 16 0 0 0 8 8l1.63-1.63a1 1 0 0 1 1.05-.23c.74.32 1.53.56 2.36.72a1 1 0 0 1 .75 1.27z"/></svg>
+          <h4 class="font-display text-lg text-white mb-2">Service that answers</h4>
+          <p class="text-sm text-dim leading-[1.7]">Pan-India service network. AMC available. The phone gets answered.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── CONTACT ───────────────── -->
+  <section id="contact" class="relative py-28 sm:py-36 px-5 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-10">
+        <span class="num-tag">/ 07</span>
+        <span class="text-mute text-xs tracking-extra uppercase">Inquire</span>
+        <span class="flex-1 neon-line"></span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-10">
+
+        <!-- Left: messaging -->
+        <div class="lg:col-span-5">
+          <h2 class="font-display text-[clamp(34px,4.6vw,68px)] leading-[1] tracking-tightest font-medium text-white rv">
+            Tell us about<br/>
+            <span class="bg-gradient-to-r from-glow1 to-glow2 bg-clip-text text-transparent">your line.</span>
+          </h2>
+          <p class="mt-6 text-dim leading-[1.8] text-[15px] rv">
+            Send a brief, an existing layout, or just a target throughput. Our application
+            engineering team will reply with a sized proposal within two working days.
+          </p>
+
+          <div class="mt-10 space-y-5 rv">
+            <a href="tel:+919810000000" class="flex items-start gap-4 group">
+              <span class="w-10 h-10 rounded-full glass metallic-ring grid place-items-center text-glow1 flex-shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V21a1 1 0 0 1-1.09 1A19.86 19.86 0 0 1 2 4.09 1 1 0 0 1 3 3h4.09a1 1 0 0 1 1 .75c.16.83.4 1.62.72 2.36a1 1 0 0 1-.23 1.05L7.21 8.79a16 16 0 0 0 8 8l1.63-1.63a1 1 0 0 1 1.05-.23c.74.32 1.53.56 2.36.72a1 1 0 0 1 .75 1.27z"/></svg>
+              </span>
+              <div>
+                <div class="text-[10px] uppercase tracking-extra text-mute font-mono">Direct line</div>
+                <div class="text-white group-hover:text-glow1 transition-colors">+91 98100 00000</div>
+              </div>
+            </a>
+
+            <a href="mailto:sales@poojaautomation.in" class="flex items-start gap-4 group">
+              <span class="w-10 h-10 rounded-full glass metallic-ring grid place-items-center text-glow2 flex-shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              </span>
+              <div>
+                <div class="text-[10px] uppercase tracking-extra text-mute font-mono">Email</div>
+                <div class="text-white group-hover:text-glow2 transition-colors">sales@poojaautomation.in</div>
+              </div>
+            </a>
+
+            <div class="flex items-start gap-4">
+              <span class="w-10 h-10 rounded-full glass metallic-ring grid place-items-center text-glow3 flex-shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <div>
+                <div class="text-[10px] uppercase tracking-extra text-mute font-mono">Workshop</div>
+                <div class="text-white">Near Bharat Gas Agency,<br/>Badli Industrial Area, Delhi 110042</div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <span class="w-10 h-10 rounded-full glass metallic-ring grid place-items-center text-warm flex-shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <div>
+                <div class="text-[10px] uppercase tracking-extra text-mute font-mono">Hours</div>
+                <div class="text-white">Mon — Sat · 09:30 to 19:00 IST</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="lg:col-span-7">
+          <form id="inquiryForm" class="glass metallic-ring rounded-3xl p-6 sm:p-10 rv" novalidate>
+            <div class="flex items-center justify-between mb-8">
+              <div class="font-display text-2xl text-white">Inquiry form</div>
+              <span class="badge"><span class="w-1.5 h-1.5 rounded-full bg-glow3 pulse-dot"></span> Secure</span>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Name</label>
+                <input class="field" name="name" type="text" placeholder="Your full name" required />
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Company</label>
+                <input class="field" name="company" type="text" placeholder="Organisation" />
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Email</label>
+                <input class="field" name="email" type="email" placeholder="you@company.com" required />
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Phone</label>
+                <input class="field" name="phone" type="tel" placeholder="+91 ..." />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Machine of interest</label>
+              <select class="field" name="machine">
+                <option>Plastic Shrink Wrapping Machine — PSW-450</option>
+                <option>Automatic Web Sealer — WS-Pro</option>
+                <option>L-Sealer — LS-Compact</option>
+                <option>Chamber Sealer — CSP</option>
+                <option>Heat Tunnel — HT-Series</option>
+                <option>Strapping / Box Sealer</option>
+                <option>Custom / not sure yet</option>
+              </select>
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-[10px] uppercase tracking-extra text-mute font-mono mb-2">Tell us about your line</label>
+              <textarea class="field" name="message" rows="4" placeholder="Product, target throughput, timeline, anything else…"></textarea>
+            </div>
+
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div class="text-[11px] text-mute font-mono">
+                Replies in &lt; 48h · No spam, ever.
+              </div>
+              <button type="submit" class="btn-primary">
+                <span id="submitLabel">Send inquiry</span>
+                <svg id="submitIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+
+            <div id="formNotice" class="hidden mt-6 p-4 rounded-xl border border-glow3/30 bg-glow3/5 text-glow3 text-sm flex items-start gap-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
+              <div>
+                <div class="text-white font-medium">Inquiry received.</div>
+                <div class="text-dim text-[13px] mt-0.5">An application engineer will reach out within two working days.</div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────── FOOTER ───────────────── -->
+  <footer class="relative border-t border-line/60 mt-12 pb-10">
+    <div class="max-w-[1280px] mx-auto px-5 sm:px-8 pt-16">
+      <div class="grid md:grid-cols-12 gap-10 mb-14">
+        <div class="md:col-span-5">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="relative w-8 h-8 grid place-items-center">
+              <span class="absolute inset-0 rounded-full border border-glow1/40 logo-ring"></span>
+              <span class="absolute inset-1 rounded-full border border-glow2/30 logo-ring" style="animation-direction: reverse; animation-duration: 12s;"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-glow1 shadow-[0_0_12px_#00d9ff]"></span>
+            </span>
+            <span class="font-display font-semibold tracking-tight text-white text-lg">Pooja Automation</span>
+          </div>
+          <p class="text-dim text-sm leading-[1.7] max-w-md">
+            Industrial shrink wrapping machinery and packaging automation, engineered
+            in Badli, Delhi — shipping to factories across India and overseas since the early 2000s.
+          </p>
+        </div>
+
+        <div class="md:col-span-2">
+          <div class="text-[10px] uppercase tracking-extra text-mute font-mono mb-4">Explore</div>
+          <ul class="space-y-2 text-sm text-dim">
+            <li><a href="#machines" class="hover:text-white transition-colors">Machines</a></li>
+            <li><a href="#featured" class="hover:text-white transition-colors">Featured</a></li>
+            <li><a href="#process" class="hover:text-white transition-colors">Process</a></li>
+            <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+          </ul>
+        </div>
+
+        <div class="md:col-span-2">
+          <div class="text-[10px] uppercase tracking-extra text-mute font-mono mb-4">Find us</div>
+          <ul class="space-y-2 text-sm text-dim">
+            <li><a href="https://www.justdial.com/Delhi/Pooja-Automation-Near-Bharat-Gas-Agency-Badli/011PXX11-XX11-180228200037-H1R2_BZDET" target="_blank" rel="noopener" class="hover:text-white transition-colors">JustDial</a></li>
+            <li><a href="https://www.tradeindia.com/pooja-automation-systems-11481972/" target="_blank" rel="noopener" class="hover:text-white transition-colors">TradeIndia</a></li>
+            <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="md:col-span-3">
+          <div class="text-[10px] uppercase tracking-extra text-mute font-mono mb-4">Reach out</div>
+          <div class="text-sm text-dim leading-[1.7]">
+            Near Bharat Gas Agency,<br/>Badli Industrial Area,<br/>Delhi 110042 · India
+          </div>
+          <a href="mailto:sales@poojaautomation.in" class="block mt-4 text-glow1 text-sm hover:underline">
+            sales@poojaautomation.in
+          </a>
+        </div>
+      </div>
+
+      <div class="neon-line opacity-50 mb-7"></div>
+
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-mute font-mono">
+        <div>© 2026 Pooja Automation · Built with precision in Delhi</div>
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-glow3 pulse-dot"></span>
+          Workshop online · Inquiries open
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+
+<!-- ═══════════════════════════════════════════════════ SCRIPT ═══════════════════════════════════════════════════ -->
+<script type="module">
+import * as THREE from 'three';
+import Lenis from 'lenis';
+
+/* ─────────── Mobile detection ─────────── */
+const isTouch = matchMedia('(hover: none)').matches;
+const isSmall = innerWidth < 760;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ─────────── Lenis smooth scroll ─────────── */
+const lenis = new Lenis({
+  duration: 1.15,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: !reduceMotion,
+  wheelMultiplier: 1.0,
+  touchMultiplier: 1.6,
+});
+gsap.registerPlugin(ScrollTrigger);
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+/* ─────────── Three.js scene ─────────── */
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: !isSmall,
+  alpha: true,
+  powerPreference: 'high-performance',
+});
+renderer.setPixelRatio(Math.min(devicePixelRatio, isSmall ? 1.5 : 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.6, 6.4);
+
+/* ─────────── Lights ─────────── */
+scene.add(new THREE.AmbientLight(0x4a5466, 0.55));
+
+const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+keyLight.position.set(4, 6, 5);
+scene.add(keyLight);
+
+const rimCyan = new THREE.PointLight(0x00d9ff, 4.5, 22);
+rimCyan.position.set(-4, 1.6, 3);
+scene.add(rimCyan);
+
+const rimViolet = new THREE.PointLight(0x7c5cff, 3.2, 22);
+rimViolet.position.set(4.2, 0.4, -2);
+scene.add(rimViolet);
+
+const fillTeal = new THREE.PointLight(0x3effd2, 1.4, 16);
+fillTeal.position.set(0, -2.4, 4);
+scene.add(fillTeal);
+
+/* ─────────── Build the shrink wrap machine procedurally ─────────── */
+const machine = new THREE.Group();
+machine.name = 'ShrinkMachine';
+
+const matChrome = new THREE.MeshStandardMaterial({
+  color: 0xc8ccd6, metalness: 0.92, roughness: 0.28,
+});
+const matSteel = new THREE.MeshStandardMaterial({
+  color: 0x6c7382, metalness: 0.88, roughness: 0.4,
+});
+const matDark = new THREE.MeshStandardMaterial({
+  color: 0x1a1d28, metalness: 0.65, roughness: 0.55,
+});
+const matBelt = new THREE.MeshStandardMaterial({
+  color: 0x07090f, metalness: 0.1, roughness: 0.85,
+});
+const matGlass = new THREE.MeshPhysicalMaterial({
+  color: 0x0a1822, metalness: 0.2, roughness: 0.05,
+  transmission: 0.7, transparent: true, opacity: 0.4,
+  ior: 1.5, thickness: 0.3,
+});
+const matEmissive = new THREE.MeshStandardMaterial({
+  color: 0x05060a, emissive: 0x00d9ff, emissiveIntensity: 1.6,
+});
+const matEmissiveWarm = new THREE.MeshStandardMaterial({
+  color: 0x0a0608, emissive: 0xff6633, emissiveIntensity: 1.3,
+});
+const matRedLed   = new THREE.MeshStandardMaterial({ color: 0x110000, emissive: 0xff2244, emissiveIntensity: 2.5 });
+const matGreenLed = new THREE.MeshStandardMaterial({ color: 0x001100, emissive: 0x3effd2, emissiveIntensity: 2.5 });
+const matAmberLed = new THREE.MeshStandardMaterial({ color: 0x110a00, emissive: 0xffb464, emissiveIntensity: 2.2 });
+
+/* Conveyor base */
+const base = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.32, 1.2), matSteel);
+base.position.y = -0.05;
+machine.add(base);
+
+/* Conveyor belt top */
+const belt = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.05, 1.0), matBelt);
+belt.position.y = 0.135;
+machine.add(belt);
+
+/* Belt rollers visible at ends */
+for (let i = 0; i < 6; i++) {
+  const t = i / 5;
+  const x = -2.1 + t * 4.2;
+  const skip = (x > -1.0 && x < 0.9); // hide rollers under tunnel area
+  if (skip) continue;
+  const roller = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.07, 0.07, 1.05, 18),
+    matChrome
+  );
+  roller.rotation.z = Math.PI / 2;
+  roller.position.set(x, 0.13, 0);
+  machine.add(roller);
+}
+
+/* Side rails */
+const railGeom = new THREE.BoxGeometry(4.6, 0.05, 0.05);
+const railL = new THREE.Mesh(railGeom, matChrome); railL.position.set(0, 0.18, 0.55);
+const railR = new THREE.Mesh(railGeom, matChrome); railR.position.set(0, 0.18, -0.55);
+machine.add(railL, railR);
+
+/* Tunnel chamber — built from 5 boxes (no front/back panels so we can see through) */
+const tunnelGroup = new THREE.Group();
+
+// Top
+const tTop = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.08, 1.4), matChrome);
+tTop.position.y = 1.5;
+tunnelGroup.add(tTop);
+// Sides
+const tSide1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.2, 1.4), matChrome);
+tSide1.position.set(-0.92, 0.92, 0);
+const tSide2 = tSide1.clone(); tSide2.position.x = 0.92;
+tunnelGroup.add(tSide1, tSide2);
+// Roof structure (small detail)
+const roofRail = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.05, 0.06), matSteel);
+roofRail.position.set(0, 1.58, 0.5); tunnelGroup.add(roofRail);
+const roofRail2 = roofRail.clone(); roofRail2.position.z = -0.5; tunnelGroup.add(roofRail2);
+
+// Inner glow plate
+const innerGlowTop = new THREE.Mesh(
+  new THREE.PlaneGeometry(1.7, 1.3),
+  matEmissiveWarm
+);
+innerGlowTop.position.set(0, 1.42, 0); innerGlowTop.rotation.x = Math.PI / 2;
+tunnelGroup.add(innerGlowTop);
+
+// Heating bars (inside, glowing)
+for (let i = 0; i < 4; i++) {
+  const bar = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.025, 0.025, 1.7, 10),
+    matEmissiveWarm
+  );
+  bar.rotation.z = Math.PI / 2;
+  bar.position.set(0, 1.36 - i * 0.04, -0.45 + i * 0.3);
+  tunnelGroup.add(bar);
+}
+
+// Tunnel inner glow point lights (subtle)
+const tunnelLight1 = new THREE.PointLight(0xff6633, 1.4, 4);
+tunnelLight1.position.set(0, 0.9, 0);
+tunnelGroup.add(tunnelLight1);
+
+machine.add(tunnelGroup);
+
+/* Control panel pedestal */
+const ctlGroup = new THREE.Group();
+const pedestal = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.0, 0.32), matSteel);
+pedestal.position.set(2.55, 0.45, 0); ctlGroup.add(pedestal);
+
+// Sloped HMI head
+const hmiHead = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.42), matDark);
+hmiHead.position.set(2.55, 1.05, 0);
+hmiHead.rotation.x = -0.35;
+ctlGroup.add(hmiHead);
+
+// Screen
+const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.22), matEmissive);
+screen.position.set(2.55, 1.1, 0.18);
+screen.rotation.x = -0.35;
+ctlGroup.add(screen);
+
+// LEDs at the top of pedestal
+const led1 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), matRedLed);
+const led2 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), matAmberLed);
+const led3 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), matGreenLed);
+led1.position.set(2.55, 0.9, 0.17);
+led2.position.set(2.55, 0.83, 0.17);
+led3.position.set(2.55, 0.76, 0.17);
+ctlGroup.add(led1, led2, led3);
+
+// E-Stop button
+const eStop = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 16), matRedLed);
+eStop.rotation.x = Math.PI / 2;
+eStop.position.set(2.55, 0.65, 0.16);
+ctlGroup.add(eStop);
+
+machine.add(ctlGroup);
+
+/* Legs */
+const legGeom = new THREE.CylinderGeometry(0.07, 0.07, 0.8, 14);
+[[-2.0, 0.5], [2.0, 0.5], [-2.0, -0.5], [2.0, -0.5]].forEach(([x, z]) => {
+  const leg = new THREE.Mesh(legGeom, matSteel);
+  leg.position.set(x, -0.6, z);
+  machine.add(leg);
+});
+
+/* Brand strip (canvas texture) */
+const brandCanvas = document.createElement('canvas');
+brandCanvas.width = 1024; brandCanvas.height = 256;
+const bctx = brandCanvas.getContext('2d');
+bctx.fillStyle = '#0a0c14';
+bctx.fillRect(0, 0, 1024, 256);
+const grd = bctx.createLinearGradient(0, 0, 1024, 0);
+grd.addColorStop(0, 'rgba(0,217,255,0.22)');
+grd.addColorStop(0.5, 'rgba(124,92,255,0.35)');
+grd.addColorStop(1, 'rgba(0,217,255,0.22)');
+bctx.fillStyle = grd;
+bctx.fillRect(0, 0, 1024, 256);
+bctx.fillStyle = '#ffffff';
+bctx.font = 'bold 84px "Space Grotesk", sans-serif';
+bctx.textAlign = 'center'; bctx.textBaseline = 'middle';
+bctx.fillText('POOJA AUTOMATION', 512, 110);
+bctx.fillStyle = '#3effd2';
+bctx.font = '500 36px "JetBrains Mono", monospace';
+bctx.fillText('PSW-450 · INDUSTRIAL LINE', 512, 180);
+const brandTex = new THREE.CanvasTexture(brandCanvas);
+brandTex.colorSpace = THREE.SRGBColorSpace;
+const brandMat = new THREE.MeshStandardMaterial({
+  map: brandTex, metalness: 0.4, roughness: 0.4,
+  emissive: 0x113344, emissiveIntensity: 0.5, emissiveMap: brandTex,
+});
+const brandPlate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.3), brandMat);
+brandPlate.position.set(-1.7, 0.0, 0.61);
+machine.add(brandPlate);
+
+/* Place the machine */
+machine.position.y = -0.2;
+scene.add(machine);
+
+/* ─────────── Floating background particles ─────────── */
+const particleCount = isSmall ? 200 : 600;
+const pGeom = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+const speeds = new Float32Array(particleCount);
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3 + 0] = (Math.random() - 0.5) * 24;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 14 - 4;
+  speeds[i] = 0.08 + Math.random() * 0.18;
+}
+pGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const pMat = new THREE.PointsMaterial({
+  color: 0x9bbfff, size: 0.018, transparent: true, opacity: 0.55,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const particles = new THREE.Points(pGeom, pMat);
+scene.add(particles);
+
+/* ─────────── Subtle ground reflection plane ─────────── */
+const groundGrid = new THREE.GridHelper(40, 40, 0x1c2030, 0x0d1018);
+groundGrid.position.y = -1.1;
+groundGrid.material.transparent = true;
+groundGrid.material.opacity = 0.18;
+scene.add(groundGrid);
+
+/* ─────────── Mouse parallax ─────────── */
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+window.addEventListener('pointermove', (e) => {
+  mouse.tx = (e.clientX / innerWidth - 0.5) * 2;
+  mouse.ty = (e.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
+
+/* ─────────── Animation loop ─────────── */
+const clock = new THREE.Clock();
+let frame = 0;
+function tick() {
+  const t = clock.getElapsedTime();
+
+  // Mouse easing
+  mouse.x += (mouse.tx - mouse.x) * 0.06;
+  mouse.y += (mouse.ty - mouse.y) * 0.06;
+
+  // Idle rotation + parallax tilt
+  if (!machineState.scrubbing) {
+    machine.rotation.y += 0.0035;
+  }
+  machine.rotation.x = -0.06 + mouse.y * 0.08 + Math.sin(t * 0.6) * 0.01;
+  machine.position.y = machineState.yBase + Math.sin(t * 0.9) * 0.04;
+  machine.position.x = machineState.xBase + mouse.x * 0.1;
+
+  // Pulse heat tunnel
+  const pulse = 1.05 + Math.sin(t * 2.6) * 0.18;
+  matEmissiveWarm.emissiveIntensity = 1.2 + Math.sin(t * 2.6) * 0.35;
+  tunnelLight1.intensity = 1.2 * pulse;
+
+  // Pulse rim lights subtly
+  rimCyan.intensity   = 4.0 + Math.sin(t * 0.8) * 0.6;
+  rimViolet.intensity = 2.8 + Math.sin(t * 0.9 + 1.2) * 0.5;
+
+  // LED blink
+  matGreenLed.emissiveIntensity = 2.2 + Math.sin(t * 3.0) * 0.6;
+  matAmberLed.emissiveIntensity = 2.0 + (Math.sin(t * 1.6) > 0 ? 0.5 : -0.4);
+
+  // Particles drift
+  const arr = pGeom.attributes.position.array;
+  for (let i = 0; i < particleCount; i++) {
+    arr[i * 3 + 1] += speeds[i] * 0.003;
+    if (arr[i * 3 + 1] > 7) arr[i * 3 + 1] = -7;
+  }
+  pGeom.attributes.position.needsUpdate = true;
+  particles.rotation.y = t * 0.012;
+
+  renderer.render(scene, camera);
+  frame++;
+  requestAnimationFrame(tick);
+}
+
+/* ─────────── Resize ─────────── */
+function handleResize() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, isSmall ? 1.5 : 2));
+}
+window.addEventListener('resize', handleResize);
+
+/* ─────────── Machine layout state (driven by scroll) ─────────── */
+const machineState = {
+  scrubbing: false,
+  xBase: isSmall ? 0 : 1.6,    // initial: machine pushed to right side of viewport
+  yBase: -0.2,
+};
+machine.position.x = machineState.xBase;
+
+/* ─────────── Loader hide ─────────── */
+const loader = document.getElementById('loader');
+const loaderFill = document.getElementById('loaderFill');
+let p = 0;
+const loadInt = setInterval(() => {
+  p = Math.min(100, p + 6 + Math.random() * 14);
+  loaderFill.style.width = p + '%';
+  if (p >= 100) {
+    clearInterval(loadInt);
+    setTimeout(() => loader.classList.add('done'), 280);
+  }
+}, 90);
+
+/* ─────────── Start render ─────────── */
+tick();
+
+/* ─────────── Reveal animations ─────────── */
+gsap.utils.toArray('.rv').forEach((el, i) => {
+  gsap.to(el, {
+    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+    delay: 0.05 * (i % 4),
+    scrollTrigger: { trigger: el, start: 'top 86%' },
+  });
+});
+
+/* ─────────── Hero entrance ─────────── */
+gsap.to('#hero .rv', {
+  opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', stagger: 0.08, delay: 0.4,
+});
+
+/* ─────────── Number counters ─────────── */
+document.querySelectorAll('[data-counter]').forEach((el) => {
+  const target = +el.dataset.target;
+  const obj = { val: 0 };
+  ScrollTrigger.create({
+    trigger: el, start: 'top 88%',
+    onEnter: () => {
+      gsap.to(obj, {
+        val: target, duration: 1.6, ease: 'power2.out',
+        onUpdate: () => { el.textContent = Math.round(obj.val).toLocaleString(); }
+      });
+    }
+  });
+});
+
+/* ─────────── Featured machine pin: scrub the 3D model ─────────── */
+const pinSection = document.getElementById('featured-pin');
+const stages = gsap.utils.toArray('.featured-stage');
+const stageLabel = document.getElementById('featured-stage-label');
+
+ScrollTrigger.create({
+  trigger: pinSection,
+  start: 'top top',
+  end: 'bottom bottom',
+  onEnter: () => { machineState.scrubbing = true; },
+  onLeave: () => { machineState.scrubbing = false; },
+  onEnterBack: () => { machineState.scrubbing = true; },
+  onLeaveBack: () => { machineState.scrubbing = false; },
+  onUpdate: (self) => {
+    const p = self.progress; // 0..1
+    // Center the machine, dolly camera, rotate based on progress
+    const xCenterTarget = isSmall ? 0 : 0.0;
+    machineState.xBase = gsap.utils.interpolate(isSmall ? 0 : 1.6, xCenterTarget, gsap.utils.clamp(0, 1, p * 1.4));
+    machineState.yBase = gsap.utils.interpolate(-0.2, -0.05, p);
+    machine.rotation.y = -0.4 + p * Math.PI * 1.6;
+    camera.position.z = gsap.utils.interpolate(6.4, isSmall ? 6.0 : 5.0, p);
+    camera.position.y = gsap.utils.interpolate(0.6, 0.25, p);
+    camera.lookAt(0, 0, 0);
+
+    // Stage transitions
+    let stage = 0;
+    if (p > 0.34) stage = 1;
+    if (p > 0.68) stage = 2;
+    stages.forEach((s, i) => {
+      s.style.opacity = (i === stage) ? '1' : '0';
+      s.style.pointerEvents = (i === stage) ? 'auto' : 'none';
+    });
+    stageLabel.textContent = (stage + 1).toString().padStart(2, '0') + ' / 03';
+  },
+});
+
+/* ─────────── Camera/machine reset when leaving the pin ─────────── */
+ScrollTrigger.create({
+  trigger: pinSection,
+  start: 'bottom bottom',
+  onLeave: () => {
+    gsap.to(camera.position, { z: 6.4, y: 0.6, duration: 0.8, ease: 'power2.out' });
+    gsap.to(machineState, { xBase: isSmall ? 0 : -1.6, duration: 0.8, ease: 'power2.out' });
+  },
+  onEnterBack: () => {
+    // re-enter handled by scrub trigger
+  }
+});
+ScrollTrigger.create({
+  trigger: pinSection,
+  start: 'top bottom',
+  onEnter: () => {
+    gsap.to(machineState, { xBase: isSmall ? 0 : 1.6, duration: 0.8, ease: 'power2.out' });
+  },
+  onLeaveBack: () => {
+    gsap.to(machineState, { xBase: isSmall ? 0 : 1.6, duration: 0.8, ease: 'power2.out' });
+    gsap.to(camera.position, { z: 6.4, y: 0.6, duration: 0.8, ease: 'power2.out' });
+  }
+});
+
+/* ─────────── Hero machine: make sure it flies in initially ─────────── */
+gsap.from(machine.scale, { x: 0.2, y: 0.2, z: 0.2, duration: 1.6, ease: 'power3.out', delay: 0.6 });
+gsap.from(machine.rotation, { y: -1.4, duration: 1.6, ease: 'power3.out', delay: 0.6 });
+
+/* ─────────── Build product grid ─────────── */
+const machines = [
+  {
+    n: '01', tag: 'Featured',
+    name: 'Plastic Shrink Wrapping Machine',
+    code: 'PSW-450',
+    blurb: 'Conveyorised shrink tunnel for medium-throughput lines. PU belt, 8-heater chamber, recipe-storing HMI.',
+    specs: ['12–25 ppm', '450×300 mm', 'POF / PVC / LDPE'],
+    accent: 'glow1',
+  },
+  {
+    n: '02', tag: 'Auto',
+    name: 'Automatic Web Sealer',
+    code: 'WS-Pro',
+    blurb: 'Full-auto pack feeder, web sealer and shrink tunnel as one inline system. Designed for consistent high-volume output.',
+    specs: ['40–60 ppm', '600×400 mm', 'Servo-driven'],
+    accent: 'glow2',
+  },
+  {
+    n: '03', tag: 'Compact',
+    name: 'L-Sealer',
+    code: 'LS-Compact',
+    blurb: 'Manual L-bar sealer for short runs and SKUs that change often. Pairs with any of our shrink tunnels.',
+    specs: ['8–15 ppm', '500×400 mm', 'Manual feed'],
+    accent: 'glow3',
+  },
+  {
+    n: '04', tag: 'Chamber',
+    name: 'Chamber Sealing Machine',
+    code: 'CSP-Series',
+    blurb: 'Vacuum chamber sealer for moisture-critical packaging. Stainless body, dual seal bars, programmable cycles.',
+    specs: ['Cycle 12–28s', 'SS 304 chamber', 'Twin seal'],
+    accent: 'glow1',
+  },
+  {
+    n: '05', tag: 'Tunnel',
+    name: 'Heat Shrink Tunnel',
+    code: 'HT-Series',
+    blurb: 'Standalone shrink tunnel. Recirculating hot air, PID control, finned heaters tuned for film type and pack mass.',
+    specs: ['Up to 60 ppm', '±2°C even heat', 'VFD speed'],
+    accent: 'warm',
+  },
+  {
+    n: '06', tag: 'End-of-line',
+    name: 'Strapping & Box Sealer',
+    code: 'BS-Series',
+    blurb: 'Carton sealing and PP strapping for outer packaging. Pairs with our shrink line for full end-of-line automation.',
+    specs: ['Auto top/bottom', 'PP / PET strap', 'Adjustable'],
+    accent: 'glow2',
+  },
+];
+
+const accentMap = {
+  glow1: { from: 'from-glow1/40', dot: 'bg-glow1', text: 'text-glow1' },
+  glow2: { from: 'from-glow2/40', dot: 'bg-glow2', text: 'text-glow2' },
+  glow3: { from: 'from-glow3/40', dot: 'bg-glow3', text: 'text-glow3' },
+  warm:  { from: 'from-warm/40',  dot: 'bg-warm',  text: 'text-warm'  },
+};
+
+const grid = document.getElementById('machine-grid');
+machines.forEach((m, idx) => {
+  const a = accentMap[m.accent];
+  const card = document.createElement('article');
+  card.className = 'tilt rv glass metallic-ring rounded-2xl p-7 sheen relative overflow-hidden';
+  card.innerHTML = `
+    <div class="tilt-inner">
+      <div class="absolute -top-12 -right-10 w-44 h-44 bg-gradient-to-br ${a.from} to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex items-center justify-between mb-5">
+        <span class="num-tag">${m.n}</span>
+        <span class="badge"><span class="w-1.5 h-1.5 rounded-full ${a.dot} pulse-dot"></span> ${m.tag}</span>
+      </div>
+
+      <!-- Procedural icon -->
+      <div class="h-32 mb-5 grid place-items-center relative">
+        <svg viewBox="0 0 240 100" class="w-full h-full">
+          ${machineSVG(idx, m.accent)}
+        </svg>
+      </div>
+
+      <div class="font-display text-xl text-white font-medium leading-snug">${m.name}</div>
+      <div class="text-xs text-mute font-mono mt-1">${m.code}</div>
+
+      <p class="text-sm text-dim leading-[1.7] mt-4 mb-5">${m.blurb}</p>
+
+      <div class="flex flex-wrap gap-1.5 mb-6">
+        ${m.specs.map(s => `<span class="bg-surface2 border border-line2/60 rounded px-2 py-0.5 text-[11px] text-dim font-mono">${s}</span>`).join('')}
+      </div>
+
+      <a href="#contact" class="flex items-center justify-between pt-4 border-t border-line2/60 ${a.text} text-sm font-medium group">
+        Inquire about ${m.code}
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+function machineSVG(idx, accent) {
+  // 6 simple line illustrations of machines, each different
+  const stroke = '#cbd0dc';
+  const accentColor = ({ glow1: '#00d9ff', glow2: '#7c5cff', glow3: '#3effd2', warm: '#ffb464' })[accent];
+  const opts = `fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"`;
+  const opts2 = `fill="none" stroke="${accentColor}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"`;
+  switch (idx) {
+    case 0: // Shrink wrap with tunnel
+      return `
+        <line x1="20" y1="68" x2="220" y2="68" ${opts}/>
+        <line x1="20" y1="76" x2="220" y2="76" ${opts}/>
+        <rect x="80"  y="30" width="80" height="40" rx="3" ${opts}/>
+        <rect x="84"  y="34" width="72" height="32" rx="2" ${opts2} opacity="0.6"/>
+        <line x1="92" y1="50" x2="148" y2="50" ${opts2}/>
+        <line x1="92" y1="58" x2="148" y2="58" ${opts2}/>
+        <circle cx="32" cy="72" r="3" ${opts}/>
+        <circle cx="208" cy="72" r="3" ${opts}/>
+        <line x1="34" y1="78" x2="34" y2="92" ${opts}/>
+        <line x1="206" y1="78" x2="206" y2="92" ${opts}/>
+      `;
+    case 1: // Web sealer
+      return `
+        <rect x="30" y="34" width="180" height="44" rx="4" ${opts}/>
+        <line x1="30" y1="56" x2="210" y2="56" ${opts2} opacity="0.7"/>
+        <circle cx="60" cy="56" r="6" ${opts}/>
+        <circle cx="180" cy="56" r="6" ${opts}/>
+        <rect x="100" y="40" width="40" height="16" rx="2" ${opts2}/>
+        <line x1="50" y1="78" x2="50" y2="92" ${opts}/>
+        <line x1="190" y1="78" x2="190" y2="92" ${opts}/>
+      `;
+    case 2: // L-sealer
+      return `
+        <path d="M40 70 L40 30 L120 30" ${opts2}/>
+        <line x1="120" y1="30" x2="200" y2="30" ${opts}/>
+        <line x1="40" y1="70" x2="200" y2="70" ${opts}/>
+        <rect x="60" y="42" width="120" height="22" rx="2" ${opts}/>
+        <circle cx="180" cy="22" r="4" ${opts2}/>
+      `;
+    case 3: // Chamber
+      return `
+        <rect x="30" y="32" width="180" height="50" rx="3" ${opts}/>
+        <rect x="44" y="42" width="152" height="32" rx="2" ${opts2} opacity="0.6"/>
+        <line x1="44" y1="58" x2="196" y2="58" ${opts2}/>
+        <circle cx="170" cy="20" r="6" ${opts}/>
+        <line x1="170" y1="26" x2="170" y2="32" ${opts}/>
+      `;
+    case 4: // Tunnel
+      return `
+        <rect x="40" y="30" width="160" height="50" rx="4" ${opts}/>
+        ${[0,1,2,3,4].map(i => `<line x1="${56 + i*30}" y1="38" x2="${56 + i*30}" y2="72" ${opts2} opacity="0.7"/>`).join('')}
+        <line x1="20" y1="60" x2="40" y2="60" ${opts}/>
+        <line x1="200" y1="60" x2="220" y2="60" ${opts}/>
+      `;
+    case 5: // Strapping
+      return `
+        <rect x="60" y="38" width="120" height="50" rx="3" ${opts}/>
+        <line x1="120" y1="20" x2="120" y2="92" ${opts2}/>
+        <circle cx="120" cy="20" r="4" ${opts}/>
+        <line x1="40" y1="78" x2="200" y2="78" ${opts}/>
+      `;
+  }
+  return '';
+}
+
+/* ─────────── Industry tiles ─────────── */
+const industryIcons = {
+  pill: '<rect x="6" y="13" width="20" height="6" rx="3"/><line x1="16" y1="13" x2="16" y2="19"/>',
+  bottle: '<path d="M12 4h8v6c0 2 2 3 2 6v8c0 1-1 2-2 2h-8c-1 0-2-1-2-2v-8c0-3 2-4 2-6V4z"/>',
+  spray: '<rect x="11" y="10" width="10" height="14" rx="1"/><rect x="13" y="6" width="6" height="4"/><line x1="22" y1="8" x2="26" y2="6"/><line x1="22" y1="11" x2="27" y2="11"/>',
+  book: '<path d="M6 6h14v20H6z"/><line x1="9" y1="11" x2="17" y2="11"/><line x1="9" y1="15" x2="17" y2="15"/><line x1="9" y1="19" x2="14" y2="19"/>',
+  chip: '<rect x="8" y="8" width="16" height="16" rx="1"/><rect x="12" y="12" width="8" height="8"/><line x1="6" y1="12" x2="8" y2="12"/><line x1="6" y1="16" x2="8" y2="16"/><line x1="6" y1="20" x2="8" y2="20"/><line x1="24" y1="12" x2="26" y2="12"/><line x1="24" y1="16" x2="26" y2="16"/><line x1="24" y1="20" x2="26" y2="20"/>',
+  bolt: '<polygon points="11 4 21 14 17 14 19 26 11 18 15 18"/>',
+  thread: '<path d="M6 16c0-6 4-10 10-10s10 4 10 10-4 10-10 10c-4 0-6-2-6-4s2-4 4-4 4 2 4 4"/>',
+  drop: '<path d="M16 4 c5 7 8 11 8 15a8 8 0 0 1-16 0c0-4 3-8 8-15z"/>',
+  leaf: '<path d="M6 26c0-12 8-20 20-20-1 13-9 21-20 20z"/><line x1="10" y1="22" x2="20" y2="12"/>',
+  diamond: '<polygon points="16 4 26 12 16 28 6 12"/><line x1="6" y1="12" x2="26" y2="12"/>',
+  gear: '<circle cx="16" cy="16" r="4"/><path d="M16 4v4 M16 24v4 M4 16h4 M24 16h4 M7 7l3 3 M22 22l3 3 M7 25l3-3 M22 10l3-3"/>',
+  bag: '<path d="M8 12h16l-2 16H10z"/><path d="M12 12V8a4 4 0 0 1 8 0v4"/>',
+};
+
+document.querySelectorAll('.industry-tile').forEach((tile) => {
+  const name = tile.dataset.industry;
+  const ico  = industryIcons[tile.dataset.icon] || industryIcons.gear;
+  tile.className = 'industry-tile bg-surface group hover:bg-surface2 transition-colors p-7 flex flex-col items-start gap-4 cursor-default';
+  tile.innerHTML = `
+    <svg viewBox="0 0 32 32" class="w-7 h-7 text-glow1 group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      ${ico}
+    </svg>
+    <div class="font-display text-base text-chrome group-hover:text-white transition-colors">${name}</div>
+  `;
+});
+
+/* ─────────── Tilt cards (desktop only) ─────────── */
+if (!isTouch) {
+  document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+/* ─────────── Form handling ─────────── */
+const form = document.getElementById('inquiryForm');
+const notice = document.getElementById('formNotice');
+const submitLabel = document.getElementById('submitLabel');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const data = new FormData(form);
+  const name = (data.get('name') || '').toString().trim();
+  const email = (data.get('email') || '').toString().trim();
+  if (!name || !email) {
+    submitLabel.textContent = 'Please fill name & email';
+    setTimeout(() => submitLabel.textContent = 'Send inquiry', 2000);
+    return;
+  }
+  submitLabel.textContent = 'Sending…';
+  // Simulated network — wire to your backend / Formspree / Supabase as needed
+  setTimeout(() => {
+    notice.classList.remove('hidden');
+    submitLabel.textContent = 'Sent ✓';
+    form.reset();
+    setTimeout(() => submitLabel.textContent = 'Send inquiry', 3000);
+  }, 900);
+});
+
+/* ─────────── Smooth anchor scroll ─────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const id = a.getAttribute('href');
+    if (id.length < 2) return;
+    const tgt = document.querySelector(id);
+    if (!tgt) return;
+    e.preventDefault();
+    lenis.scrollTo(tgt, { offset: -10, duration: 1.2 });
+  });
+});
+
+/* ─────────── ScrollTrigger refresh after content paints ─────────── */
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+});
+</script>
+
+</body>
+</html>
