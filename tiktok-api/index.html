@@ -889,7 +889,8 @@
             rel="noopener noreferrer"
             class="btn-primary"
           >
-            🚀 Get API Key — 500 Free Calls
+            🚀 Get API Key — <span class="js-free-tier-calls">25</span> Free
+            Calls
           </a>
           <a
             href="https://scrapiq.in"
@@ -1018,7 +1019,9 @@
         <div class="plan-card">
           <div class="plan-name">Free</div>
           <div class="plan-price">$0</div>
-          <div class="plan-calls">500 calls/mo</div>
+          <div class="plan-calls">
+            <span class="js-free-tier-calls">25</span> calls/mo
+          </div>
         </div>
         <div class="plan-card">
           <div class="plan-name">Pro</div>
@@ -1046,7 +1049,7 @@
           🔌 Data APIs for developers — starting with TikTok
         </p>
         <p class="footer-bio">
-          500 free calls →
+          <span class="js-free-tier-calls">25</span> free calls →
           <a
             href="https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro"
             target="_blank"
@@ -1066,6 +1069,12 @@
     <script>
       const RAPIDAPI_APP_URL =
         "https://rapidapi.com/bhaumikdhameliya30/api/tiktok-data-pro";
+
+      /** Single source of truth for the free-tier call count shown across the page. */
+      const FREE_TIER_CALLS = 25;
+      document.querySelectorAll(".js-free-tier-calls").forEach(function (el) {
+        el.textContent = FREE_TIER_CALLS;
+      });
 
       /** Defaults must match the profile/hashtag inputs’ intended demo state. */
       const DEFAULT_PROFILE_USERNAME = "khaby.lame";
